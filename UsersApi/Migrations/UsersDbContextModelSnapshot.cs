@@ -24,35 +24,21 @@ namespace UsersApi.Migrations
 
             modelBuilder.Entity("UsersApi.Models.Rol", b =>
                 {
-                    b.Property<int>("IdRol")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
-                        .HasColumnName("id_rol");
+                        .HasColumnName("id");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("IdRol"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Codigo")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("character varying(20)")
-                        .HasColumnName("codigo");
+                    b.Property<bool>("Activo")
+                        .HasColumnType("boolean")
+                        .HasColumnName("activo");
 
                     b.Property<string>("Descripcion")
                         .HasMaxLength(255)
                         .HasColumnType("character varying(255)")
                         .HasColumnName("descripcion");
-
-                    b.Property<bool>("EstaActivo")
-                        .HasColumnType("boolean")
-                        .HasColumnName("esta_activo");
-
-                    b.Property<DateTime>("FechaCreacion")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("fecha_creacion");
-
-                    b.Property<DateTime?>("FechaModificacion")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("fecha_modificacion");
 
                     b.Property<string>("Nombre")
                         .IsRequired()
@@ -60,24 +46,9 @@ namespace UsersApi.Migrations
                         .HasColumnType("character varying(50)")
                         .HasColumnName("nombre");
 
-                    b.Property<string>("UsuarioCreacion")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("usuario_creacion");
+                    b.HasKey("Id");
 
-                    b.Property<string>("UsuarioModificacion")
-                        .HasColumnType("text")
-                        .HasColumnName("usuario_modificacion");
-
-                    b.Property<byte[]>("Version")
-                        .IsConcurrencyToken()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("bytea")
-                        .HasColumnName("version");
-
-                    b.HasKey("IdRol");
-
-                    b.HasIndex("Codigo")
+                    b.HasIndex("Nombre")
                         .IsUnique();
 
                     b.ToTable("roles");
@@ -85,129 +56,86 @@ namespace UsersApi.Migrations
 
             modelBuilder.Entity("UsersApi.Models.Usuario", b =>
                 {
-                    b.Property<int>("IdUsuario")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
-                        .HasColumnName("id_usuario");
+                        .HasColumnName("id");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("IdUsuario"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("CodigoUsuario")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("codigo_usuario");
-
-                    b.Property<string>("Contrasenia")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("contrasenia");
-
-                    b.Property<bool>("EstaActivo")
+                    b.Property<bool>("Activo")
                         .HasColumnType("boolean")
-                        .HasColumnName("esta_activo");
+                        .HasColumnName("activo");
 
-                    b.Property<DateTime?>("FechaBloqueo")
+                    b.Property<string>("Apellido")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("apellido");
+
+                    b.Property<string>("Correo")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("correo");
+
+                    b.Property<DateTime>("FechaActualizacion")
                         .HasColumnType("timestamp with time zone")
-                        .HasColumnName("fecha_bloqueo");
+                        .HasColumnName("fecha_actualizacion");
 
                     b.Property<DateTime>("FechaCreacion")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("fecha_creacion");
 
-                    b.Property<DateTime?>("FechaModificacion")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("fecha_modificacion");
-
-                    b.Property<DateTime?>("FechaUltimoAcceso")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("fecha_ultimo_acceso");
-
-                    b.Property<DateTime?>("FechaVencimiento")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("fecha_vencimiento");
-
-                    b.Property<int>("IntentosFallidos")
-                        .HasColumnType("integer")
-                        .HasColumnName("intentos_fallidos");
-
                     b.Property<string>("Nombre")
                         .IsRequired()
-                        .HasColumnType("text")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
                         .HasColumnName("nombre");
 
-                    b.Property<string>("Roles")
+                    b.Property<string>("PasswordHash")
                         .IsRequired()
                         .HasColumnType("text")
-                        .HasColumnName("roles");
+                        .HasColumnName("password_hash");
 
-                    b.Property<string>("UsuarioCreacion")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("usuario_creacion");
+                    b.HasKey("Id");
 
-                    b.Property<string>("UsuarioModificacion")
-                        .HasColumnType("text")
-                        .HasColumnName("usuario_modificacion");
-
-                    b.Property<byte[]>("Version")
-                        .IsConcurrencyToken()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("bytea")
-                        .HasColumnName("version");
-
-                    b.HasKey("IdUsuario");
-
-                    b.HasIndex("CodigoUsuario")
+                    b.HasIndex("Correo")
                         .IsUnique();
 
-                    b.ToTable("Usuarios");
+                    b.ToTable("usuarios");
                 });
 
             modelBuilder.Entity("UsersApi.Models.UsuarioRol", b =>
                 {
-                    b.Property<int>("IdUsuarioRol")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
-                        .HasColumnName("id_usuario_rol");
+                        .HasColumnName("id");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("IdUsuarioRol"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<DateTime>("FechaCreacion")
+                    b.Property<bool>("Activo")
+                        .HasColumnType("boolean")
+                        .HasColumnName("activo");
+
+                    b.Property<DateTime>("FechaAsignacion")
                         .HasColumnType("timestamp with time zone")
-                        .HasColumnName("fecha_creacion");
+                        .HasColumnName("fecha_asignacion");
 
-                    b.Property<DateTime?>("FechaModificacion")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("fecha_modificacion");
-
-                    b.Property<int>("IdRol")
+                    b.Property<int>("RolId")
                         .HasColumnType("integer")
-                        .HasColumnName("id_rol");
+                        .HasColumnName("rol_id");
 
-                    b.Property<int>("IdUsuario")
+                    b.Property<int>("UsuarioId")
                         .HasColumnType("integer")
-                        .HasColumnName("id_usuario");
+                        .HasColumnName("usuario_id");
 
-                    b.Property<string>("UsuarioCreacion")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("usuario_creacion");
+                    b.HasKey("Id");
 
-                    b.Property<string>("UsuarioModificacion")
-                        .HasColumnType("text")
-                        .HasColumnName("usuario_modificacion");
+                    b.HasIndex("RolId");
 
-                    b.Property<byte[]>("Version")
-                        .IsConcurrencyToken()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("bytea")
-                        .HasColumnName("version");
-
-                    b.HasKey("IdUsuarioRol");
-
-                    b.HasIndex("IdRol");
-
-                    b.HasIndex("IdUsuario", "IdRol")
+                    b.HasIndex("UsuarioId", "RolId")
                         .IsUnique();
 
                     b.ToTable("usuario_roles");
@@ -217,13 +145,13 @@ namespace UsersApi.Migrations
                 {
                     b.HasOne("UsersApi.Models.Rol", "Rol")
                         .WithMany("UsuarioRoles")
-                        .HasForeignKey("IdRol")
+                        .HasForeignKey("RolId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("UsersApi.Models.Usuario", "Usuario")
                         .WithMany("UsuarioRoles")
-                        .HasForeignKey("IdUsuario")
+                        .HasForeignKey("UsuarioId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

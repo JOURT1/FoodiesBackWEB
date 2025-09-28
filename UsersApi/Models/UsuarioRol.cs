@@ -1,29 +1,32 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using CommonApi.Models;
 
 namespace UsersApi.Models
 {
     [Table("usuario_roles")]
-
-    public class UsuarioRol : Auditoria
+    public class UsuarioRol
     {
         [Key]
-        [Column("id_usuario_rol")]
-        public int IdUsuarioRol { get; set; }
+        [Column("id")]
+        public int Id { get; set; }
 
-        [Column("id_usuario")]
-        [ForeignKey("Usuario")]
-        [Required]
-        public required int IdUsuario { get; set; }
+        [Column("usuario_id")]
+        public int UsuarioId { get; set; }
 
-        [Column("id_rol")]
-        [ForeignKey("Rol")]
-        [Required]
-        public required int IdRol { get; set; }
+        [Column("rol_id")]
+        public int RolId { get; set; }
 
-        // Navegación
-        public virtual Usuario Usuario { get; set; } = null!;
-        public virtual Rol Rol { get; set; } = null!;
+        [Column("fecha_asignacion")]
+        public DateTime FechaAsignacion { get; set; } = DateTime.UtcNow;
+
+        [Column("activo")]
+        public bool Activo { get; set; } = true;
+
+        // Relaciones
+        [ForeignKey("UsuarioId")]
+        public virtual Usuario? Usuario { get; set; }
+
+        [ForeignKey("RolId")]
+        public virtual Rol? Rol { get; set; }
     }
 }

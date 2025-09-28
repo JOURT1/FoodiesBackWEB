@@ -1,51 +1,42 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using UsersApi.Dtos.Request;
-using UsersApi.Dtos.Response;
-using UsersApi.Services;
+using UsersApi.Services.Interfaces;
 
 namespace UsersApi.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class UsersController : ControllerBase
+    [Authorize]
+    public class UsersController(IUsuarioService usuarioService) : ControllerBase
     {
-        private readonly IUsuarioService _usuarioService;
-
-        public UsersController(IUsuarioService usuarioService)
+        [HttpGet]
+        public async Task<IActionResult> GetAll()
         {
-            _usuarioService = usuarioService;
-        }
-
-        [HttpPost("gestionar")]
-        [Authorize]
-        public async Task<ActionResult<UsuarioResponseDto>> GestionarUsuario([FromBody] GestionUsuarioRequestDto request)
-        {
-            var resultado = await _usuarioService.GestionarUsuarioAsync(request);
-            return Ok(resultado);
-        }
-
-        [HttpGet("consultar/{id?}")]
-        [Authorize]
-        public async Task<ActionResult<List<UsuarioResponseDto>>> ConsultarUsuarios(int? id = null)
-        {
-            var usuarios = await _usuarioService.ConsultarUsuariosAsync(new ConsultaUsuarioRequestDto { Id = id, Nombre = null });
+            var usuarios = await usuarioService.GetAllAsync();
             return Ok(usuarios);
         }
 
-        [HttpPost("consultar")]
-        [Authorize]
-        public async Task<ActionResult<List<UsuarioResponseDto>>> ConsultarUsuariosPost([FromBody] ConsultaUsuarioRequestDto request)
+        [HttpGet("{id:int}")]
+        public async Task<IActionResult> GetById(int id)
         {
-            var usuarios = await _usuarioService.ConsultarUsuariosAsync(request);
-            return Ok(usuarios);
-        }
-
-        [HttpPost("autenticar")]
-        public async Task<ActionResult<UsuarioResponseDto>> AutenticarUsuario([FromBody] AutenticacionRequestDto request)
-        {
-            var usuario = await _usuarioService.AutenticarUsuarioAsync(request);
+            var usuario = await usuarioService.GetByIdAsync(id);
             return Ok(usuario);
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        public async Task<IActionResult> Create([FromBody] UsuarioCreateRequestDto requestDto)
+        {
+            var nuevoUsuario = await usuarioService.CreateAsync(requestDto);
+            return CreatedAtAction(nameof(GetById), new { id = nuevoUsuario.Id }, nuevoUsuario);
+        }
+
+        [HttpPut("{id:int}")]
+        public async Task<IActionResult> Update(int id, [FromBody] UsuarioUpdateRequestDto requestDto)
+        {
+            var usuarioActualizado = await usuarioService.UpdateAsync(id, requestDto);
+            return Ok(usuarioActualizado);
         }
     }
 }

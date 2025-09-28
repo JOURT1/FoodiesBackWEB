@@ -1,26 +1,22 @@
-using UsersApi.Models;
-
 namespace UsersApi.Dtos.Response
 {
     public class UsuarioResponseDto
     {
-        public int IdUsuario { get; set; }
-        public string Nombre { get; set; } = string.Empty;
-        public string CodigoUsuario { get; set; } = string.Empty;
-        public bool EstaActivo { get; set; }
-        public DateTime? FechaUltimoAcceso { get; set; }
-        public DateTime? FechaBloqueo { get; set; }
-        public DateTime? FechaCreacion { get; set; }
-        public int IntentosFallidos { get; set; }
-        
-        /// <summary>
-        /// Lista de roles del usuario
-        /// </summary>
-        public List<string> Roles { get; set; } = new List<string>();
+        public int Id { get; set; }
+        public required string Nombre { get; set; }
+        public required string Apellido { get; set; }
+        public required string Correo { get; set; }
+        public DateTime FechaCreacion { get; set; }
+        public DateTime FechaActualizacion { get; set; }
+        public bool Activo { get; set; }
+        public List<RolResponseDto> Roles { get; set; } = [];
+    }
 
-        /// <summary>
-        /// String de roles para compatibilidad (deprecated)
-        /// </summary>
-        public string Rol => string.Join(",", Roles);
+    public class RolResponseDto
+    {
+        public int Id { get; set; }
+        public required string Nombre { get; set; }
+        public string? Descripcion { get; set; }
+        public bool Activo { get; set; }
     }
 }

@@ -1,13 +1,12 @@
-using CommonApi.Helpers;
-using Mapster;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Npgsql;
-using Scalar.AspNetCore;
 using UsersApi.Data;
 using UsersApi.Data.Repositories;
+using UsersApi.Data.Repositories.Interfaces;
 using UsersApi.Services;
+using UsersApi.Services.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,17 +15,23 @@ builder.Services.AddEndpointsApiExplorer();
 
 var connectionString = builder.Configuration.GetConnectionString("ConnectionDataBase");
 builder.Services.AddHttpContextAccessor();
-builder.Services.AddScoped<AuditoriaInterceptor>();
-builder.Services.AddScoped<UsuarioRepository>();
-builder.Services.AddScoped<UsuarioRolRepository>();
-builder.Services.AddScoped<IUsuarioService, UsuarioServiceImpl>();
-builder.Services.AddDbContext<UsersDbContext>((sp, options) =>
+
+// Dependency Injection
+builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
+builder.Services.AddScoped<IRolRepository, RolRepository>();
+builder.Services.AddScoped<IUsuarioRolRepository, UsuarioRolRepository>();
+builder.Services.AddScoped<IUsuarioService, UsuarioService>();
+builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IJwtService, JwtService>();
+
+builder.Services.AddDbContext<UsersDbContext>(options =>
 {
     options.UseNpgsql(connectionString);
-    options.AddInterceptors(sp.GetRequiredService<AuditoriaInterceptor>());
 });
 
 var jwtSettings = builder.Configuration.GetSection("Jwt");
+var secretKey = jwtSettings["SecretKey"] ?? throw new ArgumentNullException("JWT SecretKey is required");
+
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -34,17 +39,15 @@ builder.Services.AddAuthentication(options =>
 })
 .AddJwtBearer(options =>
 {
-    options.Authority = jwtSettings["Authority"];
-    options.Audience = jwtSettings["Audience"];
-    options.RequireHttpsMetadata = false;
-    options.SaveToken = true;
     options.TokenValidationParameters = new TokenValidationParameters
     {
-        ValidateIssuer = false,
+        ValidateIssuer = true,
         ValidIssuer = jwtSettings["Issuer"],
-        ValidateAudience = false,
+        ValidateAudience = true,
         ValidAudience = jwtSettings["Audience"],
         ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        IssuerSigningKey = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(secretKey)),
         ClockSkew = TimeSpan.Zero
     };
 });
@@ -65,7 +68,7 @@ builder.Services.AddOpenApi(options =>
     });
 });
 
-builder.Services.AddMapster();
+
 
 var app = builder.Build();
 
@@ -74,10 +77,11 @@ using (var scope = app.Services.CreateScope())
     var context = scope.ServiceProvider.GetRequiredService<UsersDbContext>();
     context.Database.Migrate();
 
-    var sqlScriptPath = Path.Combine(AppContext.BaseDirectory, "scriptInicial.sql");
-    if (File.Exists(sqlScriptPath))
+    // Ejecutar script inicial para crear roles
+    var initialScriptPath = Path.Combine(AppContext.BaseDirectory, "Scripts", "InitialRoles.sql");
+    if (File.Exists(initialScriptPath))
     {
-        var sql = File.ReadAllText(sqlScriptPath);
+        var sql = File.ReadAllText(initialScriptPath);
         using var conn = new NpgsqlConnection(connectionString);
         conn.Open();
         using var cmd = new NpgsqlCommand(sql, conn);
@@ -87,15 +91,10 @@ using (var scope = app.Services.CreateScope())
 
 if (app.Environment.IsDevelopment())
 {
-    app.MapOpenApi().CacheOutput();
-    app.MapScalarApiReference();
-    app.MapGet("/", () => Results.Redirect("/scalar/v1"))
-   .ExcludeFromDescription();
+    app.MapOpenApi();
 }
 
-// app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
-app.UseMiddleware<ExceptionMiddleware>();
 app.MapControllers();
 app.Run();

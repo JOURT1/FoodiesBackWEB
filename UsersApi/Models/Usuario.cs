@@ -1,69 +1,48 @@
-﻿using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Microsoft.EntityFrameworkCore;
-using CommonApi.Models;
 
 namespace UsersApi.Models
 {
-    [Table("Usuarios")]
-    [Index(nameof(CodigoUsuario), IsUnique = true)]
-    public class Usuario : Auditoria
+    [Table("usuarios")]
+    public class Usuario
     {
         [Key]
-        [Column("id_usuario")]
-        public int IdUsuario { get; set; }
+        [Column("id")]
+        public int Id { get; set; }
 
         [Required]
+        [MaxLength(100)]
         [Column("nombre")]
         public required string Nombre { get; set; }
 
         [Required]
-        [Column("codigo_usuario")]
-        public required string CodigoUsuario { get; set; }
+        [MaxLength(100)]
+        [Column("apellido")]
+        public required string Apellido { get; set; }
 
         [Required]
-        [Column("contrasenia")]
-        public required string Contrasenia { get; set; }
+        [MaxLength(255)]
+        [Column("correo")]
+        public required string Correo { get; set; }
 
-        // Email removido temporalmente - la tabla no tiene esta columna
+        [Required]
+        [Column("password_hash")]
+        public required string PasswordHash { get; set; }
+
+        [Column("fecha_creacion")]
+        public DateTime FechaCreacion { get; set; } = DateTime.UtcNow;
+
+        [Column("fecha_actualizacion")]
+        public DateTime FechaActualizacion { get; set; } = DateTime.UtcNow;
+
+        [Column("activo")]
+        public bool Activo { get; set; } = true;
+
+        // Relación con roles
+        public virtual ICollection<UsuarioRol> UsuarioRoles { get; set; } = [];
+        
+        // Propiedad calculada para acceder a los roles directamente
         [NotMapped]
-        public string? Correo { get; set; }
-
-        [Required]
-        [Column("intentos_fallidos")]
-        [DefaultValue(0)]
-        public required int IntentosFallidos { get; set; }
-
-        [Column("fecha_vencimiento")]
-        public DateTime? FechaVencimiento { get; set; }
-
-        [Column("fecha_ultimo_acceso")]
-        public DateTime? FechaUltimoAcceso { get; set; }
-
-        [Column("fecha_bloqueo")]
-        public DateTime? FechaBloqueo { get; set; }
-
-        [Required]
-        [Column("esta_activo")]
-        [DefaultValue(true)]
-        public required bool EstaActivo { get; set; } = true;
-
-        // Campo roles en la base de datos (comma-separated values)
-        [Required]
-        [Column("roles")]
-        public required string Roles { get; set; } = "cliente"; // Valor por defecto
-
-        // Relación muchos a muchos con Rol
-        public virtual ICollection<UsuarioRol> UsuarioRoles { get; set; } = new List<UsuarioRol>();
-
-        // Propiedad calculada para obtener los nombres de roles como lista
-        [NotMapped]
-        public List<string> RolesLista 
-        {
-            get => string.IsNullOrEmpty(Roles) ? new List<string>() : Roles.Split(',').ToList();
-            set => Roles = string.Join(",", value);
-        }
-
+        public IEnumerable<Rol> Roles => UsuarioRoles.Select(ur => ur.Rol).Where(r => r != null)!;
     }
 }

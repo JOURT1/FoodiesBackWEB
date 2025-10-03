@@ -25,6 +25,11 @@ namespace UsersApi.Data.Repositories
                 .FirstOrDefaultAsync(r => r.Nombre == nombre && r.Activo);
         }
 
+        public async Task<Rol?> GetByNameAsync(string nombre)
+        {
+            return await GetByNombreAsync(nombre);
+        }
+
         public async Task<List<Rol>> GetAllAsync()
         {
             return await _context.Roles

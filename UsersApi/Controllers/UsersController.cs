@@ -38,5 +38,18 @@ namespace UsersApi.Controllers
             var usuarioActualizado = await usuarioService.UpdateAsync(id, requestDto);
             return Ok(usuarioActualizado);
         }
+
+        [HttpPost("{id:int}/roles")]
+        [AllowAnonymous] // Permitir acceso sin autenticación para comunicación entre servicios
+        public async Task<IActionResult> AddRoleToUser(int id, [FromBody] AddRoleRequest request)
+        {
+            var resultado = await usuarioService.AddRoleToUserAsync(id, request.RoleName);
+            return Ok(new { success = resultado, message = resultado ? "Rol agregado exitosamente" : "No se pudo agregar el rol" });
+        }
+    }
+
+    public class AddRoleRequest
+    {
+        public required string RoleName { get; set; }
     }
 }

@@ -1,0 +1,13 @@
+### Test manual para agregar rol foodie al usuario 4
+POST http://localhost:5002/api/users/4/roles
+Content-Type: application/json
+
+{
+  "RoleName": "foodie"
+}
+
+### Test para verificar usuario antes
+GET http://localhost:5002/api/users/4
+
+### Test para verificar roles disponibles
+GET http://localhost:5002/api/roles

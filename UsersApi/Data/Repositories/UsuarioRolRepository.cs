@@ -40,5 +40,25 @@ namespace UsersApi.Data.Repositories
             return await _context.UsuarioRoles
                 .AnyAsync(ur => ur.UsuarioId == usuarioId && ur.RolId == rolId && ur.Activo);
         }
+
+        public async Task<UsuarioRol?> GetByUserAndRoleAsync(int usuarioId, int rolId)
+        {
+            return await _context.UsuarioRoles
+                .FirstOrDefaultAsync(ur => ur.UsuarioId == usuarioId && ur.RolId == rolId);
+        }
+
+        public async Task<UsuarioRol> CreateAsync(UsuarioRol usuarioRol)
+        {
+            _context.UsuarioRoles.Add(usuarioRol);
+            await _context.SaveChangesAsync();
+            return usuarioRol;
+        }
+
+        public async Task<UsuarioRol> UpdateAsync(UsuarioRol usuarioRol)
+        {
+            _context.UsuarioRoles.Update(usuarioRol);
+            await _context.SaveChangesAsync();
+            return usuarioRol;
+        }
     }
 }

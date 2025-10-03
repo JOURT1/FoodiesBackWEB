@@ -118,6 +118,57 @@ namespace UsersApi.Services
             };
         }
 
+        public async Task<bool> AddRoleToUserAsync(int usuarioId, string roleName)
+        {
+            try
+            {
+                // Verificar que el usuario existe
+                var usuario = await _usuarioRepository.GetByIdAsync(usuarioId);
+                if (usuario == null)
+                {
+                    return false;
+                }
+
+                // Buscar el rol por nombre
+                var rol = await _rolRepository.GetByNameAsync(roleName);
+                if (rol == null)
+                {
+                    return false;
+                }
+
+                // Verificar si el usuario ya tiene este rol
+                var usuarioRolExistente = await _usuarioRolRepository.GetByUserAndRoleAsync(usuarioId, rol.Id);
+                if (usuarioRolExistente != null)
+                {
+                    // Si existe pero está inactivo, lo activamos
+                    if (!usuarioRolExistente.Activo)
+                    {
+                        usuarioRolExistente.Activo = true;
+                        usuarioRolExistente.FechaAsignacion = DateTime.UtcNow;
+                        await _usuarioRolRepository.UpdateAsync(usuarioRolExistente);
+                        return true;
+                    }
+                    // Si ya está activo, no hacemos nada pero retornamos true
+                    return true;
+                }
+
+                // Crear nueva relación usuario-rol
+                var nuevoUsuarioRol = new UsuarioRol
+                {
+                    UsuarioId = usuarioId,
+                    RolId = rol.Id,
+                    Activo = true,
+                    FechaAsignacion = DateTime.UtcNow
+                };
+
+                await _usuarioRolRepository.CreateAsync(nuevoUsuarioRol);
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
 
     }
 }

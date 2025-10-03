@@ -21,6 +21,8 @@ namespace UsersApi.Services
 
         public string GenerateToken(Usuario usuario)
         {
+            Console.WriteLine($"DEBUG JWT: Generando token para usuario ID: {usuario.Id}, Email: {usuario.Correo}");
+            
             var claims = new List<Claim>
             {
                 new(ClaimTypes.NameIdentifier, usuario.Id.ToString()),
@@ -31,11 +33,14 @@ namespace UsersApi.Services
                 new("name", $"{usuario.Nombre} {usuario.Apellido}")
             };
 
+            Console.WriteLine($"DEBUG JWT: Claims básicos agregados - NameIdentifier: {usuario.Id}, Email: {usuario.Correo}");
+
             // Agregar roles
             foreach (var rol in usuario.Roles)
             {
                 claims.Add(new Claim(ClaimTypes.Role, rol.Nombre));
                 claims.Add(new Claim("role", rol.Nombre));
+                Console.WriteLine($"DEBUG JWT: Rol agregado: {rol.Nombre}");
             }
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_secretKey));

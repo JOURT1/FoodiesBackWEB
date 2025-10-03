@@ -3,6 +3,7 @@ using FormularioFoodieApi.Dtos.Request;
 using FormularioFoodieApi.Dtos.Response;
 using FormularioFoodieApi.Models;
 using FormularioFoodieApi.Services.Interfaces;
+using System.Security.Claims;
 
 namespace FormularioFoodieApi.Services
 {
@@ -22,7 +23,18 @@ namespace FormularioFoodieApi.Services
             _logger = logger;
         }
 
-        public async Task<FormularioFoodieResponseDto> CreateAsync(int usuarioId, FormularioFoodieCreateRequestDto requestDto)
+        public async Task<FormularioFoodieResponseDto> CreateAsync(ClaimsPrincipal user, FormularioFoodieCreateRequestDto requestDto)
+        {
+            var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userIdClaim) || !int.TryParse(userIdClaim, out int usuarioId))
+            {
+                throw new UnauthorizedAccessException("No se pudo identificar al usuario");
+            }
+
+            return await CreateAsync(usuarioId, requestDto);
+        }
+
+        private async Task<FormularioFoodieResponseDto> CreateAsync(int usuarioId, FormularioFoodieCreateRequestDto requestDto)
         {
             // Validar que el usuario no tenga ya un formulario
             if (await _formularioRepository.ExistsForUserAsync(usuarioId))
@@ -61,8 +73,6 @@ namespace FormularioFoodieApi.Services
 
             // Verificar si cumple los requisitos para ser Foodie y agregar rol
             await ProcessFoodieRoleAsync(usuarioId, formularioCreado);
-
-            _logger.LogInformation($"Formulario Foodie creado exitosamente para usuario {usuarioId}");
 
             return MapToResponseDto(formularioCreado);
         }
@@ -138,12 +148,32 @@ namespace FormularioFoodieApi.Services
                 await ProcessFoodieRoleAsync(formulario.UsuarioId, formularioActualizado);
             }
 
-            _logger.LogInformation($"Formulario Foodie {id} actualizado exitosamente");
-
             return MapToResponseDto(formularioActualizado);
         }
 
-        public async Task<FormularioFoodieResponseDto> UpdateMyFormularioAsync(int usuarioId, FormularioFoodieUpdateRequestDto requestDto)
+        public async Task<FormularioFoodieResponseDto?> GetMyFormularioAsync(ClaimsPrincipal user)
+        {
+            var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userIdClaim) || !int.TryParse(userIdClaim, out int usuarioId))
+            {
+                throw new UnauthorizedAccessException("No se pudo identificar al usuario");
+            }
+
+            return await GetByUsuarioIdAsync(usuarioId);
+        }
+
+        public async Task<FormularioFoodieResponseDto> UpdateMyFormularioAsync(ClaimsPrincipal user, FormularioFoodieUpdateRequestDto requestDto)
+        {
+            var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userIdClaim) || !int.TryParse(userIdClaim, out int usuarioId))
+            {
+                throw new UnauthorizedAccessException("No se pudo identificar al usuario");
+            }
+
+            return await UpdateMyFormularioAsync(usuarioId, requestDto);
+        }
+
+        private async Task<FormularioFoodieResponseDto> UpdateMyFormularioAsync(int usuarioId, FormularioFoodieUpdateRequestDto requestDto)
         {
             var formularioExistente = await _formularioRepository.GetByUsuarioIdAsync(usuarioId);
             if (formularioExistente == null)
@@ -178,6 +208,33 @@ namespace FormularioFoodieApi.Services
             return formularios.Select(MapToResponseDto).ToList();
         }
 
+        public async Task<object?> GetCurrentUserAsync(ClaimsPrincipal user)
+        {
+            var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userIdClaim) || !int.TryParse(userIdClaim, out int usuarioId))
+            {
+                throw new UnauthorizedAccessException("No se pudo identificar al usuario");
+            }
+
+            // Obtener información del usuario desde UsersApi
+            var userInfo = await _usersApiService.GetCurrentUserAsync();
+            if (userInfo != null)
+            {
+                return userInfo;
+            }
+
+            // Si no se puede obtener del UsersApi, crear respuesta básica
+            return new
+            {
+                id = usuarioId,
+                nombre = "Usuario",
+                apellido = "Actual",
+                correo = "usuario@foodiesbnb.com",
+                fechaCreacion = DateTime.UtcNow,
+                estaActivo = true
+            };
+        }
+
         private async Task ValidateUniqueDataAsync(FormularioFoodieCreateRequestDto requestDto)
         {
             if (await _formularioRepository.ExistsByEmailAsync(requestDto.Email))
@@ -203,27 +260,10 @@ namespace FormularioFoodieApi.Services
                 // Verificar si cumple los requisitos para ser Foodie
                 bool cumpleRequisitos = formulario.SeguidoresInstagram >= 1000 || formulario.SeguidoresTikTok >= 1000;
 
-                _logger.LogInformation($"Usuario {usuarioId}: Instagram={formulario.SeguidoresInstagram}, TikTok={formulario.SeguidoresTikTok}, CumpleRequisitos={cumpleRequisitos}");
-
                 if (cumpleRequisitos)
                 {
-                    _logger.LogInformation($"Intentando agregar rol 'foodie' al usuario {usuarioId}");
-                    
-                    // Intentar agregar el rol de Foodie al usuario
+                    // Usar el método original que funciona con ID específico
                     bool rolAgregado = await _usersApiService.AddRoleToUserAsync(usuarioId, "foodie");
-                    
-                    if (rolAgregado)
-                    {
-                        _logger.LogInformation($"Rol 'foodie' agregado exitosamente al usuario {usuarioId}");
-                    }
-                    else
-                    {
-                        _logger.LogWarning($"No se pudo agregar el rol 'foodie' al usuario {usuarioId}");
-                    }
-                }
-                else
-                {
-                    _logger.LogInformation($"Usuario {usuarioId} no cumple los requisitos para rol 'foodie'. Instagram: {formulario.SeguidoresInstagram}, TikTok: {formulario.SeguidoresTikTok}");
                 }
             }
             catch (Exception ex)

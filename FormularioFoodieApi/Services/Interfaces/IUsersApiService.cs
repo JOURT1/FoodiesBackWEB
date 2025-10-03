@@ -5,5 +5,6 @@ namespace FormularioFoodieApi.Services.Interfaces
         Task<bool> AddRoleToUserAsync(int usuarioId, string roleName);
         Task<bool> ValidateUserExistsAsync(int usuarioId);
         Task<string> GetUserTokenAsync();
+        Task<object?> GetCurrentUserAsync();
     }
 }

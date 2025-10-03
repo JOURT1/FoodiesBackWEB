@@ -32,16 +32,17 @@ namespace FormularioFoodieApi.Controllers
             return Ok(formulario);
         }
 
+        [HttpGet("mi-usuario")]
+        public async Task<IActionResult> GetMyUser()
+        {
+            var usuario = await formularioService.GetCurrentUserAsync(User);
+            return Ok(usuario);
+        }
+
         [HttpGet("mi-formulario")]
         public async Task<IActionResult> GetMyFormulario()
         {
-            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            if (string.IsNullOrEmpty(userIdClaim) || !int.TryParse(userIdClaim, out int usuarioId))
-            {
-                return BadRequest("No se pudo identificar al usuario");
-            }
-
-            var formulario = await formularioService.GetByUsuarioIdAsync(usuarioId);
+            var formulario = await formularioService.GetMyFormularioAsync(User);
             return Ok(formulario);
         }
 
@@ -55,13 +56,7 @@ namespace FormularioFoodieApi.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] FormularioFoodieCreateRequestDto requestDto)
         {
-            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            if (string.IsNullOrEmpty(userIdClaim) || !int.TryParse(userIdClaim, out int usuarioId))
-            {
-                return BadRequest("No se pudo identificar al usuario");
-            }
-
-            var nuevoFormulario = await formularioService.CreateAsync(usuarioId, requestDto);
+            var nuevoFormulario = await formularioService.CreateAsync(User, requestDto);
             return CreatedAtAction(nameof(GetById), new { id = nuevoFormulario.Id }, nuevoFormulario);
         }
 
@@ -75,13 +70,7 @@ namespace FormularioFoodieApi.Controllers
         [HttpPut("mi-formulario")]
         public async Task<IActionResult> UpdateMyFormulario([FromBody] FormularioFoodieUpdateRequestDto requestDto)
         {
-            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            if (string.IsNullOrEmpty(userIdClaim) || !int.TryParse(userIdClaim, out int usuarioId))
-            {
-                return BadRequest("No se pudo identificar al usuario");
-            }
-
-            var formularioActualizado = await formularioService.UpdateMyFormularioAsync(usuarioId, requestDto);
+            var formularioActualizado = await formularioService.UpdateMyFormularioAsync(User, requestDto);
             return Ok(formularioActualizado);
         }
     }

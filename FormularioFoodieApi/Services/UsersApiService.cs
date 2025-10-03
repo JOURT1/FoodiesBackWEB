@@ -9,12 +9,28 @@ namespace FormularioFoodieApi.Services
         private readonly HttpClient _httpClient;
         private readonly IConfiguration _configuration;
         private readonly ILogger<UsersApiService> _logger;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public UsersApiService(HttpClient httpClient, IConfiguration configuration, ILogger<UsersApiService> logger)
+        public UsersApiService(HttpClient httpClient, IConfiguration configuration, ILogger<UsersApiService> logger, IHttpContextAccessor httpContextAccessor)
         {
             _httpClient = httpClient;
             _configuration = configuration;
             _logger = logger;
+            _httpContextAccessor = httpContextAccessor;
+        }
+
+        private void SetAuthorizationHeader()
+        {
+            var context = _httpContextAccessor.HttpContext;
+            if (context?.Request.Headers.ContainsKey("Authorization") == true)
+            {
+                var authHeader = context.Request.Headers["Authorization"].FirstOrDefault();
+                if (!string.IsNullOrEmpty(authHeader))
+                {
+                    _httpClient.DefaultRequestHeaders.Authorization = 
+                        new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", authHeader.Replace("Bearer ", ""));
+                }
+            }
         }
 
         public async Task<bool> AddRoleToUserAsync(int usuarioId, string roleName)
@@ -24,28 +40,18 @@ namespace FormularioFoodieApi.Services
                 var usersApiUrl = _configuration["ApiSettings:UsersApiBaseUrl"];
                 var requestUrl = $"{usersApiUrl}/api/users/{usuarioId}/roles";
 
-                _logger.LogInformation($"UsersApiUrl configurada: {usersApiUrl}");
-                _logger.LogInformation($"URL completa para agregar rol: {requestUrl}");
-
                 var requestBody = new { RoleName = roleName };
                 var json = JsonSerializer.Serialize(requestBody);
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
 
-                _logger.LogInformation($"Enviando petición POST a {requestUrl} con body: {json}");
-
                 var response = await _httpClient.PostAsync(requestUrl, content);
-                
-                var responseContent = await response.Content.ReadAsStringAsync();
-                _logger.LogInformation($"Response status: {response.StatusCode}, Content: {responseContent}");
                 
                 if (response.IsSuccessStatusCode)
                 {
-                    _logger.LogInformation($"Rol '{roleName}' agregado exitosamente al usuario {usuarioId}");
                     return true;
                 }
                 else
                 {
-                    _logger.LogWarning($"Error al agregar rol al usuario {usuarioId}: {response.StatusCode} - {responseContent}");
                     return false;
                 }
             }
@@ -63,7 +69,6 @@ namespace FormularioFoodieApi.Services
                 var usersApiUrl = _configuration["ApiSettings:UsersApiBaseUrl"];
                 var requestUrl = $"{usersApiUrl}/api/users/{usuarioId}";
 
-                // Agregar token de autorización
                 var token = await GetUserTokenAsync();
                 if (!string.IsNullOrEmpty(token))
                 {
@@ -83,9 +88,36 @@ namespace FormularioFoodieApi.Services
 
         public async Task<string> GetUserTokenAsync()
         {
-            // Por ahora retornamos vacío ya que la autenticación se maneja a nivel de Gateway
-            // En el futuro, aquí podríamos implementar autenticación service-to-service
             return await Task.FromResult(string.Empty);
+        }
+
+        public async Task<object?> GetCurrentUserAsync()
+        {
+            try
+            {
+                SetAuthorizationHeader();
+                
+                var usersApiUrl = _configuration["ApiSettings:UsersApiBaseUrl"];
+                var requestUrl = $"{usersApiUrl}/api/auth/userinfo";
+
+                var response = await _httpClient.GetAsync(requestUrl);
+                var responseContent = await response.Content.ReadAsStringAsync();
+                
+                if (response.IsSuccessStatusCode)
+                {
+                    var user = JsonSerializer.Deserialize<object>(responseContent);
+                    return user;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Excepción al obtener usuario actual");
+                return null;
+            }
         }
     }
 }

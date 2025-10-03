@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using UsersApi.Dtos.Request;
 using UsersApi.Services.Interfaces;
+using System.Security.Claims;
 
 namespace UsersApi.Controllers
 {

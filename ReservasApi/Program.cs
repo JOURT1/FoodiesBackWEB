@@ -21,6 +21,8 @@ builder.Services.AddScoped<IReservaRepository, ReservaRepository>();
 builder.Services.AddScoped<IEntregableRepository, EntregableRepository>();
 builder.Services.AddScoped<IReservaService, ReservaService>();
 builder.Services.AddScoped<IEntregableService, EntregableService>();
+builder.Services.AddScoped<IUserApiService, UserApiService>();
+builder.Services.AddHttpClient<IUserApiService, UserApiService>();
 
 // Database Context
 builder.Services.AddDbContext<ReservasDbContext>(options =>

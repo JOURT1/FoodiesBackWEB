@@ -13,6 +13,10 @@ namespace ReservasApi.Dtos.Response
         public DateTime? FechaActualizacion { get; set; }
         public List<EntregableResponse> Entregables { get; set; } = new List<EntregableResponse>();
         
+        // Información del usuario/foodie
+        public string? NombreUsuario { get; set; }
+        public string? CorreoUsuario { get; set; }
+        
         // Propiedades calculadas para el frontend
         public bool PuedeCancelar 
         { 

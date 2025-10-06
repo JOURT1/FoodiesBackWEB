@@ -216,12 +216,15 @@ namespace FormularioFoodieApi.Services
                 throw new UnauthorizedAccessException("No se pudo identificar al usuario");
             }
 
+            // TODO: Temporalmente comentado hasta arreglar conexión con UsersApi
+            /*
             // Obtener información del usuario desde UsersApi
             var userInfo = await _usersApiService.GetCurrentUserAsync();
             if (userInfo != null)
             {
                 return userInfo;
             }
+            */
 
             // Si no se puede obtener del UsersApi, crear respuesta básica
             return new
@@ -262,8 +265,27 @@ namespace FormularioFoodieApi.Services
 
                 if (cumpleRequisitos)
                 {
-                    // Usar el método original que funciona con ID específico
-                    bool rolAgregado = await _usersApiService.AddRoleToUserAsync(usuarioId, "foodie");
+                    try
+                    {
+                        bool rolAgregado = await _usersApiService.AddRoleToUserAsync(usuarioId, "foodie");
+                        if (rolAgregado)
+                        {
+                            _logger.LogInformation($"Usuario {usuarioId} cumple requisitos para ser Foodie - Rol asignado exitosamente");
+                        }
+                        else
+                        {
+                            _logger.LogWarning($"Usuario {usuarioId} cumple requisitos para ser Foodie pero no se pudo asignar el rol");
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError(ex, $"Error al asignar rol foodie al usuario {usuarioId}: {ex.Message}");
+                        // Continuar sin lanzar excepción para no afectar la creación del formulario
+                    }
+                }
+                else
+                {
+                    _logger.LogInformation($"Usuario {usuarioId} NO cumple requisitos para ser Foodie (Instagram: {formulario.SeguidoresInstagram}, TikTok: {formulario.SeguidoresTikTok})");
                 }
             }
             catch (Exception ex)

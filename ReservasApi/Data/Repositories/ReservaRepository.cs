@@ -91,5 +91,14 @@ namespace ReservasApi.Data.Repositories
                 .OrderBy(r => r.Fecha)
                 .ToListAsync();
         }
+
+        public async Task<IEnumerable<Reserva>> GetByNombreLocalAsync(string nombreLocal)
+        {
+            return await _context.Reservas
+                .Include(r => r.Entregables)
+                .Where(r => r.NombreLocal == nombreLocal)
+                .OrderByDescending(r => r.FechaCreacion)
+                .ToListAsync();
+        }
     }
 }

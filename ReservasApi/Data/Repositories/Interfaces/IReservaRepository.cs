@@ -14,5 +14,6 @@ namespace ReservasApi.Data.Repositories.Interfaces
         Task<bool> ExistsAsync(int id);
         Task<IEnumerable<Reserva>> GetByEstadoAsync(string estado);
         Task<IEnumerable<Reserva>> GetByFechaRangoAsync(DateTime fechaInicio, DateTime fechaFin);
+        Task<IEnumerable<Reserva>> GetByNombreLocalAsync(string nombreLocal);
     }
 }

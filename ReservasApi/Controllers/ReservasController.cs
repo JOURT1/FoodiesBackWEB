@@ -141,6 +141,38 @@ namespace ReservasApi.Controllers
             return Ok(reservas);
         }
 
+        [HttpGet("por-restaurante")]
+        [Authorize(Roles = "restaurante,Admin")]
+        public async Task<IActionResult> GetByRestaurante()
+        {
+            var usuarioId = GetUsuarioIdFromToken();
+            if (usuarioId == null)
+                return Unauthorized();
+
+            // Obtener todos los roles del usuario
+            var userRoles = User.Claims.Where(c => c.Type == ClaimTypes.Role).Select(c => c.Value).ToList();
+            
+            Console.WriteLine($"DEBUG GetByRestaurante: Roles del usuario: {string.Join(", ", userRoles)}");
+            
+            // Buscar un rol que no sea "restaurante" (ese sería el nombre del restaurante)
+            var nombreRestaurante = userRoles.FirstOrDefault(role => 
+                role != "restaurante" && 
+                role != "Admin" && 
+                role != "usuario" && 
+                role != "foodie");
+            
+            if (string.IsNullOrEmpty(nombreRestaurante))
+            {
+                Console.WriteLine("DEBUG GetByRestaurante: No se encontró nombre de restaurante en los roles");
+                return BadRequest(new { mensaje = "Usuario no tiene un rol de restaurante específico", roles = userRoles });
+            }
+
+            Console.WriteLine($"DEBUG GetByRestaurante: Filtrando por restaurante: {nombreRestaurante}");
+            
+            var reservas = await _reservaService.GetReservasByRestauranteAsync(nombreRestaurante);
+            return Ok(reservas);
+        }
+
         [HttpGet("por-fecha")]
         public async Task<IActionResult> GetByFechaRango([FromQuery] DateTime fechaInicio, [FromQuery] DateTime fechaFin)
         {

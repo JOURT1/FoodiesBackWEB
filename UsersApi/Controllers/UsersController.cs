@@ -25,6 +25,14 @@ namespace UsersApi.Controllers
             return Ok(usuario);
         }
 
+        [HttpGet("public/{id:int}")]
+        [AllowAnonymous] // Permitir acceso sin autenticación para comunicación entre servicios
+        public async Task<IActionResult> GetByIdPublic(int id)
+        {
+            var usuario = await usuarioService.GetByIdAsync(id);
+            return Ok(usuario);
+        }
+
         [HttpPost]
         [AllowAnonymous]
         public async Task<IActionResult> Create([FromBody] UsuarioCreateRequestDto requestDto)

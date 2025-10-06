@@ -9,34 +9,36 @@ namespace ReservasApi.Services
     public class ReservaService : IReservaService
     {
         private readonly IReservaRepository _reservaRepository;
+        private readonly IUserApiService _userApiService;
 
-        public ReservaService(IReservaRepository reservaRepository)
+        public ReservaService(IReservaRepository reservaRepository, IUserApiService userApiService)
         {
             _reservaRepository = reservaRepository;
+            _userApiService = userApiService;
         }
 
         public async Task<IEnumerable<ReservaResponse>> GetAllReservasAsync()
         {
             var reservas = await _reservaRepository.GetAllAsync();
-            return reservas.Select(MapToResponse);
+            return await MapToResponseWithUserInfoAsync(reservas);
         }
 
         public async Task<IEnumerable<ReservaResponse>> GetReservasByUsuarioAsync(int usuarioId)
         {
             var reservas = await _reservaRepository.GetByUsuarioIdAsync(usuarioId);
-            return reservas.Select(MapToResponse);
+            return await MapToResponseWithUserInfoAsync(reservas);
         }
 
         public async Task<ReservaResponse?> GetReservaByIdAsync(int id)
         {
             var reserva = await _reservaRepository.GetByIdAsync(id);
-            return reserva != null ? MapToResponse(reserva) : null;
+            return reserva != null ? await MapToResponseWithUserInfoAsync(reserva) : null;
         }
 
         public async Task<ReservaResponse?> GetReservaByIdAndUsuarioAsync(int id, int usuarioId)
         {
             var reserva = await _reservaRepository.GetByIdAndUsuarioIdAsync(id, usuarioId);
-            return reserva != null ? MapToResponse(reserva) : null;
+            return reserva != null ? await MapToResponseWithUserInfoAsync(reserva) : null;
         }
 
         public async Task<ReservaResponse> CreateReservaAsync(CrearReservaRequest request, int usuarioId)
@@ -52,7 +54,7 @@ namespace ReservasApi.Services
             };
 
             var reservaCreada = await _reservaRepository.CreateAsync(reserva);
-            return MapToResponse(reservaCreada);
+            return await MapToResponseWithUserInfoAsync(reservaCreada);
         }
 
         public async Task<ReservaResponse?> UpdateReservaAsync(int id, ActualizarReservaRequest request, int usuarioId)
@@ -77,7 +79,7 @@ namespace ReservasApi.Services
                 reserva.EstadoReserva = request.EstadoReserva;
 
             var reservaActualizada = await _reservaRepository.UpdateAsync(reserva);
-            return MapToResponse(reservaActualizada);
+            return await MapToResponseWithUserInfoAsync(reservaActualizada);
         }
 
         public async Task<bool> DeleteReservaAsync(int id, int usuarioId)
@@ -91,13 +93,19 @@ namespace ReservasApi.Services
         public async Task<IEnumerable<ReservaResponse>> GetReservasByEstadoAsync(string estado)
         {
             var reservas = await _reservaRepository.GetByEstadoAsync(estado);
-            return reservas.Select(MapToResponse);
+            return await MapToResponseWithUserInfoAsync(reservas);
         }
 
         public async Task<IEnumerable<ReservaResponse>> GetReservasByFechaRangoAsync(DateTime fechaInicio, DateTime fechaFin)
         {
             var reservas = await _reservaRepository.GetByFechaRangoAsync(fechaInicio, fechaFin);
-            return reservas.Select(MapToResponse);
+            return await MapToResponseWithUserInfoAsync(reservas);
+        }
+
+        public async Task<IEnumerable<ReservaResponse>> GetReservasByRestauranteAsync(string nombreRestaurante)
+        {
+            var reservas = await _reservaRepository.GetByNombreLocalAsync(nombreRestaurante);
+            return await MapToResponseWithUserInfoAsync(reservas);
         }
 
         public async Task<ReservaResponse?> CambiarEstadoReservaAsync(int id, string nuevoEstado, int usuarioId)
@@ -107,7 +115,7 @@ namespace ReservasApi.Services
 
             reserva.EstadoReserva = nuevoEstado;
             var reservaActualizada = await _reservaRepository.UpdateAsync(reserva);
-            return MapToResponse(reservaActualizada);
+            return await MapToResponseWithUserInfoAsync(reservaActualizada);
         }
 
         public async Task<bool> PuedeCancelarReservaAsync(int id, int usuarioId)
@@ -127,7 +135,7 @@ namespace ReservasApi.Services
             reserva.FechaActualizacion = DateTime.UtcNow;
             
             var reservaActualizada = await _reservaRepository.UpdateAsync(reserva);
-            return MapToResponse(reservaActualizada);
+            return await MapToResponseWithUserInfoAsync(reservaActualizada);
         }
 
         public async Task ActualizarEstadosAutomaticoAsync()
@@ -197,6 +205,50 @@ namespace ReservasApi.Services
                     FechaActualizacion = e.FechaActualizacion
                 }).ToList()
             };
+        }
+
+        // Nuevos métodos para incluir información del usuario
+        private async Task<IEnumerable<ReservaResponse>> MapToResponseWithUserInfoAsync(IEnumerable<Reserva> reservas)
+        {
+            var reservasResponse = new List<ReservaResponse>();
+            
+            foreach (var reserva in reservas)
+            {
+                var response = await MapToResponseWithUserInfoAsync(reserva);
+                reservasResponse.Add(response);
+            }
+            
+            return reservasResponse;
+        }
+
+        private async Task<ReservaResponse> MapToResponseWithUserInfoAsync(Reserva reserva)
+        {
+            var response = MapToResponse(reserva);
+            
+            // Intentar obtener información del usuario
+            try
+            {
+                var userInfo = await _userApiService.GetUserByIdAsync(reserva.UsuarioId);
+                if (userInfo != null)
+                {
+                    response.NombreUsuario = $"{userInfo.Nombre} {userInfo.Apellido}".Trim();
+                    response.CorreoUsuario = userInfo.Correo;
+                    Console.WriteLine($"Usuario obtenido: {response.NombreUsuario} - {response.CorreoUsuario}");
+                }
+                else
+                {
+                    Console.WriteLine($"No se encontró información para usuario {reserva.UsuarioId}");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error al obtener información del usuario {reserva.UsuarioId}: {ex.Message}");
+                // Si no se puede obtener la info del usuario, usar valores por defecto
+                response.NombreUsuario = $"Usuario #{reserva.UsuarioId}";
+                response.CorreoUsuario = "Sin correo disponible";
+            }
+            
+            return response;
         }
     }
 }

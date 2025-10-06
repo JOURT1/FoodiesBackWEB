@@ -14,6 +14,7 @@ namespace ReservasApi.Services.Interfaces
         Task<bool> DeleteReservaAsync(int id, int usuarioId);
         Task<IEnumerable<ReservaResponse>> GetReservasByEstadoAsync(string estado);
         Task<IEnumerable<ReservaResponse>> GetReservasByFechaRangoAsync(DateTime fechaInicio, DateTime fechaFin);
+        Task<IEnumerable<ReservaResponse>> GetReservasByRestauranteAsync(string nombreRestaurante);
         Task<ReservaResponse?> CambiarEstadoReservaAsync(int id, string nuevoEstado, int usuarioId);
         Task<bool> PuedeCancelarReservaAsync(int id, int usuarioId);
         Task<ReservaResponse?> MarcarComoCompletadaAsync(int reservaId);

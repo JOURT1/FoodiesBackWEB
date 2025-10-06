@@ -20,6 +20,7 @@ builder.Services.AddHttpClient();
 builder.Services.AddScoped<IFormularioFoodieRepository, FormularioFoodieRepository>();
 builder.Services.AddScoped<IFormularioFoodieService, FormularioFoodieService>();
 builder.Services.AddScoped<IUsersApiService, UsersApiService>();
+builder.Services.AddHttpClient<IUsersApiService, UsersApiService>();
 
 builder.Services.AddDbContext<FormularioFoodieDbContext>(options =>
 {

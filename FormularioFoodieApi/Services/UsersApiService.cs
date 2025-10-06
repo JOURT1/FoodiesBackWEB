@@ -37,21 +37,29 @@ namespace FormularioFoodieApi.Services
         {
             try
             {
-                var usersApiUrl = _configuration["ApiSettings:UsersApiBaseUrl"];
+                var usersApiUrl = _configuration["ApiSettings:UsersApiBaseUrl"] ?? "http://localhost:5001";
                 var requestUrl = $"{usersApiUrl}/api/users/{usuarioId}/roles";
+
+                _logger.LogInformation($"Intentando agregar rol '{roleName}' al usuario {usuarioId} en {requestUrl}");
 
                 var requestBody = new { RoleName = roleName };
                 var json = JsonSerializer.Serialize(requestBody);
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
 
+                // Configurar timeout
+                _httpClient.Timeout = TimeSpan.FromSeconds(10);
+
                 var response = await _httpClient.PostAsync(requestUrl, content);
                 
                 if (response.IsSuccessStatusCode)
                 {
+                    _logger.LogInformation($"Rol '{roleName}' agregado exitosamente al usuario {usuarioId}");
                     return true;
                 }
                 else
                 {
+                    var errorContent = await response.Content.ReadAsStringAsync();
+                    _logger.LogWarning($"Error al agregar rol '{roleName}' al usuario {usuarioId}. StatusCode: {response.StatusCode}, Error: {errorContent}");
                     return false;
                 }
             }
@@ -103,13 +111,40 @@ namespace FormularioFoodieApi.Services
                 var response = await _httpClient.GetAsync(requestUrl);
                 var responseContent = await response.Content.ReadAsStringAsync();
                 
+                _logger.LogInformation($"GetCurrentUserAsync - Response Status: {response.StatusCode}");
+                _logger.LogInformation($"GetCurrentUserAsync - Response Content: {responseContent}");
+                
                 if (response.IsSuccessStatusCode)
                 {
-                    var user = JsonSerializer.Deserialize<object>(responseContent);
-                    return user;
+                    var options = new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true
+                    };
+                    var userResponse = JsonSerializer.Deserialize<JsonElement>(responseContent, options);
+                    
+                    // Convertir la respuesta a un objeto con las propiedades correctas
+                    var result = new
+                    {
+                        id = userResponse.TryGetProperty("id", out var idProp) ? idProp.GetInt32() : 0,
+                        nombre = userResponse.TryGetProperty("name", out var nameProp) ? 
+                            nameProp.GetString()?.Split(' ')[0] ?? "Usuario" : "Usuario",
+                        apellido = userResponse.TryGetProperty("name", out var fullNameProp) ? 
+                            string.Join(" ", fullNameProp.GetString()?.Split(' ').Skip(1) ?? Array.Empty<string>()) : "",
+                        correo = userResponse.TryGetProperty("email", out var emailProp) ? 
+                            emailProp.GetString() ?? "sin-email@foodiesbnb.com" : "sin-email@foodiesbnb.com",
+                        fechaCreacion = DateTime.UtcNow,
+                        estaActivo = true,
+                        roles = userResponse.TryGetProperty("roles", out var rolesProp) && rolesProp.ValueKind == JsonValueKind.Array ?
+                            rolesProp.EnumerateArray().Select(r => r.GetString()).Where(r => r != null).ToArray() :
+                            Array.Empty<string>()
+                    };
+                    
+                    _logger.LogInformation($"GetCurrentUserAsync - Mapped result: {JsonSerializer.Serialize(result)}");
+                    return result;
                 }
                 else
                 {
+                    _logger.LogWarning($"GetCurrentUserAsync - API returned error status: {response.StatusCode}");
                     return null;
                 }
             }

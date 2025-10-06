@@ -34,12 +34,66 @@ namespace FormularioFoodieApi.Services
             return await CreateAsync(usuarioId, requestDto);
         }
 
+        public async Task<FormularioFoodieSubmissionResponseDto> CreateWithMessageAsync(ClaimsPrincipal user, FormularioFoodieCreateRequestDto requestDto)
+        {
+            try
+            {
+                var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                if (string.IsNullOrEmpty(userIdClaim) || !int.TryParse(userIdClaim, out int usuarioId))
+                {
+                    return new FormularioFoodieSubmissionResponseDto
+                    {
+                        Success = false,
+                        Message = "Error de autenticación. Por favor, inicia sesión nuevamente."
+                    };
+                }
+
+                var formularioData = await CreateAsync(usuarioId, requestDto);
+                
+                // Verificar si cumple los requisitos para ser Foodie
+                bool cumpleRequisitos = requestDto.SeguidoresInstagram >= 1000 || requestDto.SeguidoresTikTok >= 1000;
+                
+                string mensaje = "¡Aplicación enviada exitosamente! ";
+                string rolMessage = "";
+                
+                if (cumpleRequisitos)
+                {
+                    mensaje += "Felicidades, cumples los requisitos para ser Foodie y se ha asignado tu rol automáticamente.";
+                    rolMessage = "Has sido promovido a Foodie por tener más de 1,000 seguidores. ¡Ya puedes hacer reservas!";
+                }
+                else
+                {
+                    mensaje += "Tu aplicación está en revisión. Te notificaremos cuando sea aprobada.";
+                    rolMessage = $"Necesitas al menos 1,000 seguidores en Instagram o TikTok para obtener el rol de Foodie automáticamente. Actualmente tienes {requestDto.SeguidoresInstagram} en Instagram y {requestDto.SeguidoresTikTok} en TikTok.";
+                }
+
+                return new FormularioFoodieSubmissionResponseDto
+                {
+                    Success = true,
+                    Message = mensaje,
+                    FormularioData = formularioData,
+                    RolFoodieAsignado = cumpleRequisitos,
+                    RolMessage = rolMessage
+                };
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error al crear formulario de foodie");
+                
+                return new FormularioFoodieSubmissionResponseDto
+                {
+                    Success = false,
+                    Message = ex.Message
+                };
+            }
+        }
+
         private async Task<FormularioFoodieResponseDto> CreateAsync(int usuarioId, FormularioFoodieCreateRequestDto requestDto)
         {
             // Validar que el usuario no tenga ya un formulario
             if (await _formularioRepository.ExistsForUserAsync(usuarioId))
             {
-                throw new InvalidOperationException("El usuario ya tiene un formulario de Foodie registrado");
+                throw new InvalidOperationException("Ya tienes una aplicación de Foodie registrada. Solo puedes enviar una aplicación por cuenta.");
             }
 
             // Validar unicidad de datos
@@ -242,17 +296,17 @@ namespace FormularioFoodieApi.Services
         {
             if (await _formularioRepository.ExistsByEmailAsync(requestDto.Email))
             {
-                throw new InvalidOperationException("Ya existe un formulario con este email");
+                throw new InvalidOperationException("Este correo electrónico ya está registrado. Si ya tienes una cuenta, inicia sesión o usa otro correo.");
             }
 
             if (await _formularioRepository.ExistsByInstagramAsync(requestDto.UsuarioInstagram))
             {
-                throw new InvalidOperationException("Ya existe un formulario con este usuario de Instagram");
+                throw new InvalidOperationException("Este usuario de Instagram ya está en uso. Ya hay una cuenta registrada con @" + requestDto.UsuarioInstagram + ". Verifica tu usuario o contacta soporte si necesitas ayuda.");
             }
 
             if (await _formularioRepository.ExistsByTikTokAsync(requestDto.UsuarioTikTok))
             {
-                throw new InvalidOperationException("Ya existe un formulario con este usuario de TikTok");
+                throw new InvalidOperationException("Este usuario de TikTok ya está en uso. Ya hay una cuenta registrada con @" + requestDto.UsuarioTikTok + ". Verifica tu usuario o contacta soporte si necesitas ayuda.");
             }
         }
 

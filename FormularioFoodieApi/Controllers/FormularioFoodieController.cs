@@ -56,8 +56,16 @@ namespace FormularioFoodieApi.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] FormularioFoodieCreateRequestDto requestDto)
         {
-            var nuevoFormulario = await formularioService.CreateAsync(User, requestDto);
-            return CreatedAtAction(nameof(GetById), new { id = nuevoFormulario.Id }, nuevoFormulario);
+            var resultado = await formularioService.CreateWithMessageAsync(User, requestDto);
+            
+            if (resultado.Success)
+            {
+                return CreatedAtAction(nameof(GetById), new { id = resultado.FormularioData?.Id }, resultado);
+            }
+            else
+            {
+                return BadRequest(resultado);
+            }
         }
 
         [HttpPut("{id:int}")]

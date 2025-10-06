@@ -7,6 +7,7 @@ namespace FormularioFoodieApi.Services.Interfaces
     public interface IFormularioFoodieService
     {
         Task<FormularioFoodieResponseDto> CreateAsync(ClaimsPrincipal user, FormularioFoodieCreateRequestDto requestDto);
+        Task<FormularioFoodieSubmissionResponseDto> CreateWithMessageAsync(ClaimsPrincipal user, FormularioFoodieCreateRequestDto requestDto);
         Task<FormularioFoodieResponseDto> UpdateAsync(int id, FormularioFoodieUpdateRequestDto requestDto);
         Task<FormularioFoodieResponseDto> UpdateMyFormularioAsync(ClaimsPrincipal user, FormularioFoodieUpdateRequestDto requestDto);
         Task<FormularioFoodieResponseDto?> GetByIdAsync(int id);

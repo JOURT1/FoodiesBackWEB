@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("FormularioFoodieApi")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+9d3f2c7b049deac2162279de42332eb5cbb14362")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+7156eace8cdae6ef73dad09fc41e41cb9e972a38")]
 [assembly: System.Reflection.AssemblyProductAttribute("FormularioFoodieApi")]
 [assembly: System.Reflection.AssemblyTitleAttribute("FormularioFoodieApi")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

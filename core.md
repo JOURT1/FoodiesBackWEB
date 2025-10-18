@@ -1428,262 +1428,197 @@ Usuario → ReservasController.Create()
 El siguiente diagrama presenta todos los casos de uso del sistema FoodiesBNB organizados por actores (roles) y sus respectivas funcionalidades. Este diagrama ilustra las interacciones principales que cada tipo de usuario puede realizar en la plataforma.
 
 ```mermaid
-graph TB
-    %% ============================================
-    %% ACTORES DEL SISTEMA
-    %% ============================================
+flowchart TB
+    %% Actores
+    Usuario([Usuario No Autenticado])
+    Foodie([Foodie Microinfluencer])
+    Restaurante([Restaurante])
+    Admin([Administrador])
     
-    subgraph Actores["👥 ACTORES"]
-        U[👤 Usuario<br/>No autenticado]
-        F[🍽️ Foodie<br/>Microinfluencer]
-        R[🏪 Restaurante<br/>Propietario]
-        A[⚙️ Admin<br/>Administrador]
-    end
+    %% Autenticación
+    UC01[Registrarse]
+    UC02[Iniciar Sesión]
+    UC03[Cerrar Sesión]
+    UC04[Recuperar Contraseña]
+    UC05[Ver Perfil]
+    UC06[Editar Perfil]
     
-    %% ============================================
-    %% CASOS DE USO: AUTENTICACIÓN Y REGISTRO
-    %% ============================================
+    %% Gestión Usuarios
+    UC07[Listar Usuarios]
+    UC08[Buscar Usuario]
+    UC09[Crear Usuario]
+    UC10[Modificar Usuario]
+    UC11[Eliminar Usuario]
+    UC12[Asignar Roles]
+    UC13[Activar/Desactivar Usuario]
     
-    subgraph Auth["🔐 AUTENTICACIÓN Y REGISTRO"]
-        UC01[UC-01: Registrarse en el sistema]
-        UC02[UC-02: Iniciar sesión]
-        UC03[UC-03: Cerrar sesión]
-        UC04[UC-04: Recuperar contraseña]
-        UC05[UC-05: Ver perfil de usuario]
-        UC06[UC-06: Editar perfil de usuario]
-    end
+    %% Gestión Roles
+    UC14[Crear Rol]
+    UC15[Listar Roles]
+    UC16[Modificar Rol]
+    UC17[Eliminar Rol]
+    UC18[Asignar Permisos]
     
-    %% ============================================
-    %% CASOS DE USO: GESTIÓN DE USUARIOS
-    %% ============================================
+    %% Aplicación Foodie
+    UC19[Completar Formulario]
+    UC20[Ver Mi Formulario]
+    UC21[Editar Mi Formulario]
+    UC22[Verificar Estado]
+    UC23[Revisar Aplicaciones]
+    UC24[Aprobar Aplicación]
+    UC25[Rechazar Aplicación]
+    UC26[Listar Formularios]
     
-    subgraph Users["👥 GESTIÓN DE USUARIOS"]
-        UC07[UC-07: Listar todos los usuarios]
-        UC08[UC-08: Buscar usuario por ID]
-        UC09[UC-09: Crear nuevo usuario]
-        UC10[UC-10: Modificar usuario]
-        UC11[UC-11: Eliminar usuario]
-        UC12[UC-12: Asignar roles a usuario]
-        UC13[UC-13: Desactivar/Activar usuario]
-    end
+    %% Gestión Reservas
+    UC27[Explorar Restaurantes]
+    UC28[Crear Reserva]
+    UC29[Ver Mis Reservas]
+    UC30[Ver Detalle Reserva]
+    UC31[Modificar Reserva]
+    UC32[Cancelar Reserva]
+    UC33[Verificar Cancelación]
+    UC34[Ver Reservas Restaurante]
+    UC35[Filtrar por Estado]
+    UC36[Filtrar por Fecha]
+    UC37[Ver Todas Reservas]
     
-    %% ============================================
-    %% CASOS DE USO: GESTIÓN DE ROLES
-    %% ============================================
+    %% Gestión Entregables
+    UC38[Subir Entregables]
+    UC39[Ver Entregables]
+    UC40[Editar Entregables]
+    UC41[Eliminar Entregables]
+    UC42[Registrar Monto]
+    UC43[Validar Enlaces]
     
-    subgraph Roles["🎭 GESTIÓN DE ROLES"]
-        UC14[UC-14: Crear nuevo rol]
-        UC15[UC-15: Listar roles del sistema]
-        UC16[UC-16: Modificar rol existente]
-        UC17[UC-17: Eliminar rol]
-        UC18[UC-18: Asignar permisos a rol]
-    end
+    %% Estados Reserva
+    UC44[Cambiar Estado]
+    UC45[Auto-marcar Completada]
+    UC46[Auto-marcar Falta Grave]
+    UC47[Actualizar Estados]
     
-    %% ============================================
-    %% CASOS DE USO: APLICACIÓN FOODIE
-    %% ============================================
+    %% Analytics CORE
+    UC48[Ver Dashboard Analytics]
+    UC49[Consultar Métricas]
+    UC50[Análisis Ingresos]
+    UC51[Análisis Temporal]
+    UC52[Ver Predicciones]
+    UC53[Identificar Horas Pico]
+    UC54[Ranking Foodies]
+    UC55[Análisis Estacionalidad]
+    UC56[Generar Reporte]
+    UC57[Filtrar por Fecha]
+    UC58[Comparar Periodos]
+    UC59[Regresión Lineal]
     
-    subgraph Formulario["📝 APLICACIÓN FOODIE"]
-        UC19[UC-19: Completar formulario<br/>de aplicación]
-        UC20[UC-20: Ver mi formulario]
-        UC21[UC-21: Editar mi formulario]
-        UC22[UC-22: Verificar estado<br/>de aplicación]
-        UC23[UC-23: Revisar aplicaciones<br/>pendientes]
-        UC24[UC-24: Aprobar aplicación<br/>de foodie]
-        UC25[UC-25: Rechazar aplicación<br/>con comentarios]
-        UC26[UC-26: Listar todos los<br/>formularios]
-    end
+    %% Administración
+    UC60[Ver Logs]
+    UC61[Monitorear Salud]
+    UC62[Gestionar Configuración]
+    UC63[Ejecutar Tareas]
+    UC64[Estadísticas Globales]
     
-    %% ============================================
-    %% CASOS DE USO: GESTIÓN DE RESERVAS
-    %% ============================================
+    %% Relaciones Usuario
+    Usuario --> UC01
+    Usuario --> UC02
+    Usuario --> UC04
     
-    subgraph Reservas["📅 GESTIÓN DE RESERVAS"]
-        UC27[UC-27: Explorar restaurantes<br/>disponibles]
-        UC28[UC-28: Crear nueva reserva]
-        UC29[UC-29: Ver mis reservas]
-        UC30[UC-30: Ver detalle de reserva]
-        UC31[UC-31: Modificar reserva]
-        UC32[UC-32: Cancelar reserva]
-        UC33[UC-33: Verificar si puede<br/>cancelar]
-        UC34[UC-34: Ver reservas de<br/>mi restaurante]
-        UC35[UC-35: Filtrar reservas<br/>por estado]
-        UC36[UC-36: Filtrar reservas<br/>por fecha]
-        UC37[UC-37: Ver todas las reservas<br/>del sistema]
-    end
+    %% Relaciones Foodie
+    Foodie --> UC02
+    Foodie --> UC03
+    Foodie --> UC05
+    Foodie --> UC06
+    Foodie --> UC19
+    Foodie --> UC20
+    Foodie --> UC21
+    Foodie --> UC22
+    Foodie --> UC27
+    Foodie --> UC28
+    Foodie --> UC29
+    Foodie --> UC30
+    Foodie --> UC31
+    Foodie --> UC32
+    Foodie --> UC33
+    Foodie --> UC38
+    Foodie --> UC39
+    Foodie --> UC40
+    Foodie --> UC41
+    Foodie --> UC42
+    Foodie --> UC43
     
-    %% ============================================
-    %% CASOS DE USO: GESTIÓN DE ENTREGABLES
-    %% ============================================
+    %% Relaciones Restaurante
+    Restaurante --> UC02
+    Restaurante --> UC03
+    Restaurante --> UC05
+    Restaurante --> UC06
+    Restaurante --> UC34
+    Restaurante --> UC35
+    Restaurante --> UC36
+    Restaurante --> UC30
+    Restaurante --> UC39
+    Restaurante --> UC48
+    Restaurante --> UC49
+    Restaurante --> UC50
+    Restaurante --> UC51
+    Restaurante --> UC52
+    Restaurante --> UC53
+    Restaurante --> UC54
+    Restaurante --> UC55
+    Restaurante --> UC56
+    Restaurante --> UC57
+    Restaurante --> UC58
+    Restaurante --> UC59
     
-    subgraph Entregables["📱 GESTIÓN DE ENTREGABLES"]
-        UC38[UC-38: Subir entregables<br/>post-visita]
-        UC39[UC-39: Ver entregables<br/>de una reserva]
-        UC40[UC-40: Editar entregables]
-        UC41[UC-41: Eliminar entregables]
-        UC42[UC-42: Registrar monto<br/>gastado]
-        UC43[UC-43: Validar enlaces<br/>de contenido]
-    end
+    %% Relaciones Admin
+    Admin --> UC02
+    Admin --> UC03
+    Admin --> UC05
+    Admin --> UC06
+    Admin --> UC07
+    Admin --> UC08
+    Admin --> UC09
+    Admin --> UC10
+    Admin --> UC11
+    Admin --> UC12
+    Admin --> UC13
+    Admin --> UC14
+    Admin --> UC15
+    Admin --> UC16
+    Admin --> UC17
+    Admin --> UC18
+    Admin --> UC23
+    Admin --> UC24
+    Admin --> UC25
+    Admin --> UC26
+    Admin --> UC37
+    Admin --> UC44
+    Admin --> UC47
+    Admin --> UC48
+    Admin --> UC49
+    Admin --> UC50
+    Admin --> UC51
+    Admin --> UC52
+    Admin --> UC53
+    Admin --> UC54
+    Admin --> UC55
+    Admin --> UC56
+    Admin --> UC57
+    Admin --> UC58
+    Admin --> UC59
+    Admin --> UC60
+    Admin --> UC61
+    Admin --> UC62
+    Admin --> UC63
+    Admin --> UC64
     
-    %% ============================================
-    %% CASOS DE USO: ESTADOS DE RESERVA
-    %% ============================================
-    
-    subgraph Estados["🔄 ESTADOS DE RESERVA"]
-        UC44[UC-44: Cambiar estado<br/>de reserva]
-        UC45[UC-45: Auto-marcar como<br/>Visita Completada]
-        UC46[UC-46: Auto-marcar como<br/>Falta Grave]
-        UC47[UC-47: Ejecutar actualización<br/>automática de estados]
-    end
-    
-    %% ============================================
-    %% CASOS DE USO: ANALYTICS Y REPORTES (CORE)
-    %% ============================================
-    
-    subgraph Analytics["📊 ANALYTICS Y REPORTES (CORE)"]
-        UC48[UC-48: Ver dashboard<br/>de analytics]
-        UC49[UC-49: Consultar métricas<br/>generales]
-        UC50[UC-50: Análisis de ingresos<br/>del restaurante]
-        UC51[UC-51: Análisis temporal<br/>de demanda]
-        UC52[UC-52: Ver predicciones<br/>futuras]
-        UC53[UC-53: Identificar horas pico<br/>y valle]
-        UC54[UC-54: Ranking de foodies<br/>más efectivos]
-        UC55[UC-55: Análisis de<br/>estacionalidad]
-        UC56[UC-56: Generar reporte<br/>PDF/Excel]
-        UC57[UC-57: Filtrar analytics<br/>por fecha]
-        UC58[UC-58: Ver comparativa<br/>periodos]
-        UC59[UC-59: Ver proyecciones<br/>con regresión lineal]
-    end
-    
-    %% ============================================
-    %% CASOS DE USO: ADMINISTRACIÓN GLOBAL
-    %% ============================================
-    
-    subgraph Admin["⚙️ ADMINISTRACIÓN"]
-        UC60[UC-60: Ver logs del sistema]
-        UC61[UC-61: Monitorear salud<br/>de microservicios]
-        UC62[UC-62: Gestionar configuración<br/>del sistema]
-        UC63[UC-63: Ejecutar tareas<br/>programadas]
-        UC64[UC-64: Ver estadísticas<br/>globales de plataforma]
-    end
-    
-    %% ============================================
-    %% RELACIONES: USUARIO NO AUTENTICADO
-    %% ============================================
-    
-    U --> UC01
-    U --> UC02
-    U --> UC04
-    
-    %% ============================================
-    %% RELACIONES: FOODIE
-    %% ============================================
-    
-    F --> UC02
-    F --> UC03
-    F --> UC05
-    F --> UC06
-    F --> UC19
-    F --> UC20
-    F --> UC21
-    F --> UC22
-    F --> UC27
-    F --> UC28
-    F --> UC29
-    F --> UC30
-    F --> UC31
-    F --> UC32
-    F --> UC33
-    F --> UC38
-    F --> UC39
-    F --> UC40
-    F --> UC41
-    F --> UC42
-    F --> UC43
-    
-    %% ============================================
-    %% RELACIONES: RESTAURANTE
-    %% ============================================
-    
-    R --> UC02
-    R --> UC03
-    R --> UC05
-    R --> UC06
-    R --> UC34
-    R --> UC35
-    R --> UC36
-    R --> UC30
-    R --> UC39
-    R --> UC48
-    R --> UC49
-    R --> UC50
-    R --> UC51
-    R --> UC52
-    R --> UC53
-    R --> UC54
-    R --> UC55
-    R --> UC56
-    R --> UC57
-    R --> UC58
-    R --> UC59
-    
-    %% ============================================
-    %% RELACIONES: ADMINISTRADOR
-    %% ============================================
-    
-    A --> UC02
-    A --> UC03
-    A --> UC05
-    A --> UC06
-    A --> UC07
-    A --> UC08
-    A --> UC09
-    A --> UC10
-    A --> UC11
-    A --> UC12
-    A --> UC13
-    A --> UC14
-    A --> UC15
-    A --> UC16
-    A --> UC17
-    A --> UC18
-    A --> UC23
-    A --> UC24
-    A --> UC25
-    A --> UC26
-    A --> UC37
-    A --> UC44
-    A --> UC47
-    A --> UC48
-    A --> UC49
-    A --> UC50
-    A --> UC51
-    A --> UC52
-    A --> UC53
-    A --> UC54
-    A --> UC55
-    A --> UC56
-    A --> UC57
-    A --> UC58
-    A --> UC59
-    A --> UC60
-    A --> UC61
-    A --> UC62
-    A --> UC63
-    A --> UC64
-    
-    %% ============================================
-    %% INCLUDES Y EXTENDS
-    %% ============================================
-    
-    UC28 -.->|<<include>>| UC27
-    UC38 -.->|<<include>>| UC42
-    UC38 -.->|<<include>>| UC43
-    UC45 -.->|<<extends>>| UC38
-    UC46 -.->|<<extends>>| UC47
-    UC50 -.->|<<include>>| UC57
-    UC51 -.->|<<include>>| UC57
-    UC59 -.->|<<include>>| UC50
+    %% Relaciones Include/Extend
+    UC28 -.->|include| UC27
+    UC38 -.->|include| UC42
+    UC38 -.->|include| UC43
+    UC45 -.->|extend| UC38
+    UC46 -.->|extend| UC47
+    UC50 -.->|include| UC57
+    UC51 -.->|include| UC57
+    UC59 -.->|include| UC50
 ```
 
 ---

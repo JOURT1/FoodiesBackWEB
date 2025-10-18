@@ -1423,104 +1423,106 @@ Usuario → ReservasController.Create()
 
 ---
 
-### 4.3. Diagrama de Casos de Uso (Global)
+### 4.3. Diagrama Casos de uso (global)
 
 El siguiente diagrama presenta todos los casos de uso del sistema FoodiesBNB organizados por actores (roles) y sus respectivas funcionalidades. Este diagrama ilustra las interacciones principales que cada tipo de usuario puede realizar en la plataforma.
 
 ```mermaid
-flowchart TB
-    %% Actores
-    Usuario([Usuario No Autenticado])
-    Foodie([Foodie Microinfluencer])
-    Restaurante([Restaurante])
-    Admin([Administrador])
+flowchart LR
+    %% Actores a la izquierda
+    UsuarioNoAuth[👤 Usuario No Autenticado]
+    Foodie[🍽️ Foodie Microinfluencer]
     
-    %% Autenticación
-    UC01[Registrarse]
-    UC02[Iniciar Sesión]
-    UC03[Cerrar Sesión]
-    UC04[Recuperar Contraseña]
-    UC05[Ver Perfil]
-    UC06[Editar Perfil]
+    %% Actores a la derecha
+    Restaurante[🏪 Restaurante Propietario]
+    Admin[⚙️ Administrador Sistema]
     
-    %% Gestión Usuarios
-    UC07[Listar Usuarios]
-    UC08[Buscar Usuario]
-    UC09[Crear Usuario]
-    UC10[Modificar Usuario]
-    UC11[Eliminar Usuario]
-    UC12[Asignar Roles]
-    UC13[Activar/Desactivar Usuario]
+    %% Casos de Uso: Autenticación
+    UC01((Registrarse))
+    UC02((Iniciar Sesión))
+    UC03((Cerrar Sesión))
+    UC04((Recuperar Contraseña))
+    UC05((Ver Perfil))
+    UC06((Editar Perfil))
     
-    %% Gestión Roles
-    UC14[Crear Rol]
-    UC15[Listar Roles]
-    UC16[Modificar Rol]
-    UC17[Eliminar Rol]
-    UC18[Asignar Permisos]
+    %% Casos de Uso: Gestión Usuarios
+    UC07((Listar Usuarios))
+    UC08((Buscar Usuario))
+    UC09((Crear Usuario))
+    UC10((Modificar Usuario))
+    UC11((Eliminar Usuario))
+    UC12((Asignar Roles))
+    UC13((Activar Usuario))
     
-    %% Aplicación Foodie
-    UC19[Completar Formulario]
-    UC20[Ver Mi Formulario]
-    UC21[Editar Mi Formulario]
-    UC22[Verificar Estado]
-    UC23[Revisar Aplicaciones]
-    UC24[Aprobar Aplicación]
-    UC25[Rechazar Aplicación]
-    UC26[Listar Formularios]
+    %% Casos de Uso: Gestión Roles
+    UC14((Crear Rol))
+    UC15((Listar Roles))
+    UC16((Modificar Rol))
+    UC17((Eliminar Rol))
+    UC18((Asignar Permisos))
     
-    %% Gestión Reservas
-    UC27[Explorar Restaurantes]
-    UC28[Crear Reserva]
-    UC29[Ver Mis Reservas]
-    UC30[Ver Detalle Reserva]
-    UC31[Modificar Reserva]
-    UC32[Cancelar Reserva]
-    UC33[Verificar Cancelación]
-    UC34[Ver Reservas Restaurante]
-    UC35[Filtrar por Estado]
-    UC36[Filtrar por Fecha]
-    UC37[Ver Todas Reservas]
+    %% Casos de Uso: Aplicación Foodie
+    UC19((Completar Formulario))
+    UC20((Ver Mi Formulario))
+    UC21((Editar Formulario))
+    UC22((Verificar Estado))
+    UC23((Revisar Aplicaciones))
+    UC24((Aprobar Aplicación))
+    UC25((Rechazar Aplicación))
+    UC26((Listar Formularios))
     
-    %% Gestión Entregables
-    UC38[Subir Entregables]
-    UC39[Ver Entregables]
-    UC40[Editar Entregables]
-    UC41[Eliminar Entregables]
-    UC42[Registrar Monto]
-    UC43[Validar Enlaces]
+    %% Casos de Uso: Gestión Reservas
+    UC27((Explorar Restaurantes))
+    UC28((Crear Reserva))
+    UC29((Ver Mis Reservas))
+    UC30((Ver Detalle Reserva))
+    UC31((Modificar Reserva))
+    UC32((Cancelar Reserva))
+    UC33((Verificar Cancelación))
+    UC34((Ver Reservas Restaurante))
+    UC35((Filtrar por Estado))
+    UC36((Filtrar por Fecha))
+    UC37((Ver Todas Reservas))
     
-    %% Estados Reserva
-    UC44[Cambiar Estado]
-    UC45[Auto-marcar Completada]
-    UC46[Auto-marcar Falta Grave]
-    UC47[Actualizar Estados]
+    %% Casos de Uso: Gestión Entregables
+    UC38((Subir Entregables))
+    UC39((Ver Entregables))
+    UC40((Editar Entregables))
+    UC41((Eliminar Entregables))
+    UC42((Registrar Monto))
+    UC43((Validar Enlaces))
     
-    %% Analytics CORE
-    UC48[Ver Dashboard Analytics]
-    UC49[Consultar Métricas]
-    UC50[Análisis Ingresos]
-    UC51[Análisis Temporal]
-    UC52[Ver Predicciones]
-    UC53[Identificar Horas Pico]
-    UC54[Ranking Foodies]
-    UC55[Análisis Estacionalidad]
-    UC56[Generar Reporte]
-    UC57[Filtrar por Fecha]
-    UC58[Comparar Periodos]
-    UC59[Regresión Lineal]
+    %% Casos de Uso: Estados Reserva
+    UC44((Cambiar Estado))
+    UC45((Marcar Completada))
+    UC46((Marcar Falta Grave))
+    UC47((Actualizar Estados))
     
-    %% Administración
-    UC60[Ver Logs]
-    UC61[Monitorear Salud]
-    UC62[Gestionar Configuración]
-    UC63[Ejecutar Tareas]
-    UC64[Estadísticas Globales]
+    %% Casos de Uso: Analytics CORE
+    UC48((Dashboard Analytics))
+    UC49((Consultar Métricas))
+    UC50((Análisis Ingresos))
+    UC51((Análisis Temporal))
+    UC52((Ver Predicciones))
+    UC53((Horas Pico))
+    UC54((Ranking Foodies))
+    UC55((Estacionalidad))
+    UC56((Generar Reporte))
+    UC57((Filtrar Fecha))
+    UC58((Comparar Periodos))
+    UC59((Regresión Lineal))
     
-    %% Relaciones Usuario
-    Usuario --> UC01
-    Usuario --> UC02
-    Usuario --> UC04
+    %% Casos de Uso: Administración
+    UC60((Ver Logs))
+    UC61((Monitorear Salud))
+    UC62((Configuración))
+    UC63((Tareas Programadas))
+    UC64((Estadísticas Globales))
+    
+    %% Relaciones Usuario No Autenticado
+    UsuarioNoAuth --> UC01
+    UsuarioNoAuth --> UC02
+    UsuarioNoAuth --> UC04
     
     %% Relaciones Foodie
     Foodie --> UC02
@@ -1546,69 +1548,49 @@ flowchart TB
     Foodie --> UC43
     
     %% Relaciones Restaurante
-    Restaurante --> UC02
-    Restaurante --> UC03
-    Restaurante --> UC05
-    Restaurante --> UC06
-    Restaurante --> UC34
-    Restaurante --> UC35
-    Restaurante --> UC36
-    Restaurante --> UC30
-    Restaurante --> UC39
-    Restaurante --> UC48
-    Restaurante --> UC49
-    Restaurante --> UC50
-    Restaurante --> UC51
-    Restaurante --> UC52
-    Restaurante --> UC53
-    Restaurante --> UC54
-    Restaurante --> UC55
-    Restaurante --> UC56
-    Restaurante --> UC57
-    Restaurante --> UC58
-    Restaurante --> UC59
+    UC34 --> Restaurante
+    UC35 --> Restaurante
+    UC36 --> Restaurante
+    UC30 --> Restaurante
+    UC39 --> Restaurante
+    UC48 --> Restaurante
+    UC49 --> Restaurante
+    UC50 --> Restaurante
+    UC51 --> Restaurante
+    UC52 --> Restaurante
+    UC53 --> Restaurante
+    UC54 --> Restaurante
+    UC55 --> Restaurante
+    UC56 --> Restaurante
+    UC57 --> Restaurante
+    UC58 --> Restaurante
+    UC59 --> Restaurante
     
-    %% Relaciones Admin
-    Admin --> UC02
-    Admin --> UC03
-    Admin --> UC05
-    Admin --> UC06
-    Admin --> UC07
-    Admin --> UC08
-    Admin --> UC09
-    Admin --> UC10
-    Admin --> UC11
-    Admin --> UC12
-    Admin --> UC13
-    Admin --> UC14
-    Admin --> UC15
-    Admin --> UC16
-    Admin --> UC17
-    Admin --> UC18
-    Admin --> UC23
-    Admin --> UC24
-    Admin --> UC25
-    Admin --> UC26
-    Admin --> UC37
-    Admin --> UC44
-    Admin --> UC47
-    Admin --> UC48
-    Admin --> UC49
-    Admin --> UC50
-    Admin --> UC51
-    Admin --> UC52
-    Admin --> UC53
-    Admin --> UC54
-    Admin --> UC55
-    Admin --> UC56
-    Admin --> UC57
-    Admin --> UC58
-    Admin --> UC59
-    Admin --> UC60
-    Admin --> UC61
-    Admin --> UC62
-    Admin --> UC63
-    Admin --> UC64
+    %% Relaciones Administrador
+    UC07 --> Admin
+    UC08 --> Admin
+    UC09 --> Admin
+    UC10 --> Admin
+    UC11 --> Admin
+    UC12 --> Admin
+    UC13 --> Admin
+    UC14 --> Admin
+    UC15 --> Admin
+    UC16 --> Admin
+    UC17 --> Admin
+    UC18 --> Admin
+    UC23 --> Admin
+    UC24 --> Admin
+    UC25 --> Admin
+    UC26 --> Admin
+    UC37 --> Admin
+    UC44 --> Admin
+    UC47 --> Admin
+    UC60 --> Admin
+    UC61 --> Admin
+    UC62 --> Admin
+    UC63 --> Admin
+    UC64 --> Admin
     
     %% Relaciones Include/Extend
     UC28 -.->|include| UC27

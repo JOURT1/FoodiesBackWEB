@@ -607,29 +607,29 @@ erDiagram
     %% ============================================
     
     USUARIO {
-        int id PK "Identificador único"
-        varchar(100) nombre "Nombre del usuario"
-        varchar(100) apellido "Apellido del usuario"
-        varchar(255) correo UK "Correo electrónico único"
-        text password_hash "Hash BCrypt de la contraseña"
-        timestamp fecha_creacion "Fecha de registro"
-        timestamp fecha_actualizacion "Última modificación"
-        boolean activo "Estado del usuario"
+        int id PK
+        varchar nombre
+        varchar apellido
+        varchar correo UK
+        text password_hash
+        timestamp fecha_creacion
+        timestamp fecha_actualizacion
+        boolean activo
     }
     
     ROL {
-        int id PK "Identificador único"
-        varchar(50) nombre UK "Nombre del rol"
-        varchar(255) descripcion "Descripción del rol"
-        boolean activo "Estado del rol"
+        int id PK
+        varchar nombre UK
+        varchar descripcion
+        boolean activo
     }
     
     USUARIO_ROL {
-        int id PK "Identificador único"
-        int usuario_id FK "Referencia a Usuario"
-        int rol_id FK "Referencia a Rol"
-        timestamp fecha_asignacion "Fecha de asignación"
-        boolean activo "Estado de la asignación"
+        int id PK
+        int usuario_id FK
+        int rol_id FK
+        timestamp fecha_asignacion
+        boolean activo
     }
     
     %% ============================================
@@ -637,29 +637,29 @@ erDiagram
     %% ============================================
     
     FORMULARIO_FOODIE {
-        int id PK "Identificador único"
-        int usuario_id FK "Referencia a Usuario (UsersDb)"
-        varchar(100) nombre_completo "Nombre completo"
-        varchar(100) email "Correo electrónico"
-        varchar(15) numero_personal "Teléfono de contacto"
-        date fecha_nacimiento "Fecha de nacimiento"
-        varchar(20) genero "Género: Masculino|Femenino|Otro"
-        varchar(50) pais "País de residencia"
-        varchar(50) ciudad "Ciudad de residencia"
-        varchar(50) frecuencia_contenido "Frecuencia de publicación"
-        varchar(50) usuario_instagram "Usuario de Instagram"
-        int seguidores_instagram "Cantidad de seguidores IG"
-        boolean cuenta_publica "Si la cuenta es pública"
-        varchar(50) usuario_tiktok "Usuario de TikTok"
-        int seguidores_tiktok "Cantidad de seguidores TT"
-        text sobre_ti "Descripción personal"
-        varchar(50) acepta_beneficios "Acepta términos de beneficios"
-        boolean acepta_terminos "Acepta T&C"
-        timestamp fecha_aplicacion "Fecha de solicitud"
-        timestamp fecha_actualizacion "Última modificación"
-        varchar(20) estado "pendiente|aprobado|rechazado"
-        text comentarios "Observaciones del admin"
-        boolean activo "Estado del formulario"
+        int id PK
+        int usuario_id FK
+        varchar nombre_completo
+        varchar email
+        varchar numero_personal
+        date fecha_nacimiento
+        varchar genero
+        varchar pais
+        varchar ciudad
+        varchar frecuencia_contenido
+        varchar usuario_instagram
+        int seguidores_instagram
+        boolean cuenta_publica
+        varchar usuario_tiktok
+        int seguidores_tiktok
+        text sobre_ti
+        varchar acepta_beneficios
+        boolean acepta_terminos
+        timestamp fecha_aplicacion
+        timestamp fecha_actualizacion
+        varchar estado
+        text comentarios
+        boolean activo
     }
     
     %% ============================================
@@ -667,25 +667,25 @@ erDiagram
     %% ============================================
     
     RESERVA {
-        int id PK "Identificador único"
-        int usuario_id FK "Referencia a Usuario (UsersDb)"
-        varchar(200) nombre_local "Nombre del restaurante"
-        date fecha "Fecha de la reserva"
-        varchar(10) hora "Hora en formato HH:MM"
-        int numero_personas "Cantidad de personas"
-        varchar(50) estado_reserva "Por Ir|Visita Completada|Falta Grave"
-        timestamp fecha_creacion "Fecha de creación"
-        timestamp fecha_actualizacion "Última modificación"
+        int id PK
+        int usuario_id FK
+        varchar nombre_local
+        date fecha
+        varchar hora
+        int numero_personas
+        varchar estado_reserva
+        timestamp fecha_creacion
+        timestamp fecha_actualizacion
     }
     
     ENTREGABLE {
-        int id PK "Identificador único"
-        int reserva_id FK "Referencia a Reserva"
-        varchar(500) enlace_tiktok "URL del video TikTok"
-        varchar(500) enlace_instagram "URL del post Instagram"
-        decimal(10,2) cantidad_gastada "Monto gastado en $"
-        timestamp fecha_creacion "Fecha de creación"
-        timestamp fecha_actualizacion "Última modificación"
+        int id PK
+        int reserva_id FK
+        varchar enlace_tiktok
+        varchar enlace_instagram
+        decimal cantidad_gastada
+        timestamp fecha_creacion
+        timestamp fecha_actualizacion
     }
     
     %% ============================================
@@ -694,10 +694,10 @@ erDiagram
     
     %% Relaciones del módulo de Usuarios
     USUARIO ||--o{ USUARIO_ROL : "tiene"
-    ROL ||--o{ USUARIO_ROL : "asignado a"
+    ROL ||--o{ USUARIO_ROL : "asignado_a"
     
     %% Relaciones inter-microservicios (lógicas)
-    USUARIO ||--o| FORMULARIO_FOODIE : "completa (si es foodie)"
+    USUARIO ||--o| FORMULARIO_FOODIE : "completa"
     USUARIO ||--o{ RESERVA : "crea"
     
     %% Relaciones del módulo de Reservas

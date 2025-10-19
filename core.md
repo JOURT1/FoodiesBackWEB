@@ -1425,198 +1425,208 @@ Usuario → ReservasController.Create()
 
 ### 4.3. Diagrama Casos de uso (global)
 
-El siguiente diagrama presenta todos los casos de uso del sistema FoodiesBNB organizados por actores (roles) y sus respectivas funcionalidades. Este diagrama ilustra las interacciones principales que cada tipo de usuario puede realizar en la plataforma.
+El siguiente diagrama presenta todos los casos de uso del sistema FoodiesBNB organizados por actores (roles) y sus respectivas funcionalidades, siguiendo el estándar UML clásico.
 
 ```mermaid
-graph TB
-    %% Actores externos al sistema
-    UsuarioNoAuth["👤<br/>Usuario No<br/>Autenticado"]
-    Foodie["🍽️<br/>Foodie<br/>Microinfluencer"]
-    Restaurante["🏪<br/>Restaurante<br/>Propietario"]
-    Admin["⚙️<br/>Administrador<br/>Sistema"]
+graph LR
+    %% Actores
+    U["👤 Usuario<br/>No Autenticado"]
+    F["🍽️ Foodie<br/>Microinfluencer"]
+    R["🏪 Restaurante<br/>Propietario"]
+    A["⚙️ Administrador"]
     
-    %% Sistema FoodiesBNB
-    subgraph Sistema["🌐 SISTEMA FOODIESBNB"]
-        
-        subgraph ModAuth["AUTENTICACIÓN Y PERFIL"]
-            UC01(("Registrarse"))
-            UC02(("Iniciar Sesión"))
-            UC03(("Cerrar Sesión"))
-            UC04(("Recuperar<br/>Contraseña"))
-            UC05(("Ver Perfil"))
-            UC06(("Editar Perfil"))
-        end
-        
-        subgraph ModUsers["GESTIÓN DE USUARIOS"]
-            UC07(("Listar<br/>Usuarios"))
-            UC08(("Buscar<br/>Usuario"))
-            UC09(("Crear<br/>Usuario"))
-            UC10(("Modificar<br/>Usuario"))
-            UC11(("Eliminar<br/>Usuario"))
-            UC12(("Asignar<br/>Roles"))
-            UC13(("Activar<br/>Usuario"))
-        end
-        
-        subgraph ModRoles["GESTIÓN DE ROLES"]
-            UC14(("Crear Rol"))
-            UC15(("Listar Roles"))
-            UC16(("Modificar<br/>Rol"))
-            UC17(("Eliminar Rol"))
-            UC18(("Asignar<br/>Permisos"))
-        end
-        
-        subgraph ModFormulario["APLICACIÓN FOODIE"]
-            UC19(("Completar<br/>Formulario"))
-            UC20(("Ver Mi<br/>Formulario"))
-            UC21(("Editar<br/>Formulario"))
-            UC22(("Verificar<br/>Estado"))
-            UC23(("Revisar<br/>Aplicaciones"))
-            UC24(("Aprobar<br/>Aplicación"))
-            UC25(("Rechazar<br/>Aplicación"))
-            UC26(("Listar<br/>Formularios"))
-        end
-        
-        subgraph ModReservas["GESTIÓN DE RESERVAS"]
-            UC27(("Explorar<br/>Restaurantes"))
-            UC28(("Crear<br/>Reserva"))
-            UC29(("Ver Mis<br/>Reservas"))
-            UC30(("Ver Detalle<br/>Reserva"))
-            UC31(("Modificar<br/>Reserva"))
-            UC32(("Cancelar<br/>Reserva"))
-            UC33(("Verificar<br/>Cancelación"))
-            UC34(("Ver Reservas<br/>Restaurante"))
-            UC35(("Filtrar por<br/>Estado"))
-            UC36(("Filtrar por<br/>Fecha"))
-            UC37(("Ver Todas<br/>Reservas"))
-        end
-        
-        subgraph ModEntregables["GESTIÓN DE ENTREGABLES"]
-            UC38(("Subir<br/>Entregables"))
-            UC39(("Ver<br/>Entregables"))
-            UC40(("Editar<br/>Entregables"))
-            UC41(("Eliminar<br/>Entregables"))
-            UC42(("Registrar<br/>Monto"))
-            UC43(("Validar<br/>Enlaces"))
-        end
-        
-        subgraph ModEstados["ESTADOS DE RESERVA"]
-            UC44(("Cambiar<br/>Estado"))
-            UC45(("Marcar<br/>Completada"))
-            UC46(("Marcar<br/>Falta Grave"))
-            UC47(("Actualizar<br/>Estados"))
-        end
-        
-        subgraph ModAnalytics["ANALYTICS Y REPORTES CORE"]
-            UC48(("Dashboard<br/>Analytics"))
-            UC49(("Consultar<br/>Métricas"))
-            UC50(("Análisis<br/>Ingresos"))
-            UC51(("Análisis<br/>Temporal"))
-            UC52(("Ver<br/>Predicciones"))
-            UC53(("Horas<br/>Pico"))
-            UC54(("Ranking<br/>Foodies"))
-            UC55(("Estacionalidad"))
-            UC56(("Generar<br/>Reporte"))
-            UC57(("Filtrar<br/>Fecha"))
-            UC58(("Comparar<br/>Periodos"))
-            UC59(("Regresión<br/>Lineal"))
-        end
-        
-        subgraph ModAdmin["ADMINISTRACIÓN"]
-            UC60(("Ver Logs"))
-            UC61(("Monitorear<br/>Salud"))
-            UC62(("Configuración"))
-            UC63(("Tareas<br/>Programadas"))
-            UC64(("Estadísticas<br/>Globales"))
-        end
+    %% MÓDULO: AUTENTICACIÓN Y PERFIL
+    subgraph Auth["AUTENTICACIÓN Y PERFIL"]
+        UC01(("Registrarse"))
+        UC02(("Iniciar Sesión"))
+        UC03(("Cerrar Sesión"))
+        UC04(("Recuperar<br/>Contraseña"))
+        UC05(("Ver Perfil"))
+        UC06(("Editar Perfil"))
     end
     
-    %% Relaciones Usuario No Autenticado
-    UsuarioNoAuth --- UC01
-    UsuarioNoAuth --- UC02
-    UsuarioNoAuth --- UC04
+    %% MÓDULO: GESTIÓN DE USUARIOS
+    subgraph Users["GESTIÓN DE USUARIOS"]
+        UC07(("Listar<br/>Usuarios"))
+        UC08(("Buscar<br/>Usuario"))
+        UC09(("Crear<br/>Usuario"))
+        UC10(("Modificar<br/>Usuario"))
+        UC11(("Eliminar<br/>Usuario"))
+        UC12(("Asignar<br/>Roles"))
+        UC13(("Activar<br/>Usuario"))
+    end
     
-    %% Relaciones Foodie
-    Foodie --- UC02
-    Foodie --- UC03
-    Foodie --- UC05
-    Foodie --- UC06
-    Foodie --- UC19
-    Foodie --- UC20
-    Foodie --- UC21
-    Foodie --- UC22
-    Foodie --- UC27
-    Foodie --- UC28
-    Foodie --- UC29
-    Foodie --- UC30
-    Foodie --- UC31
-    Foodie --- UC32
-    Foodie --- UC33
-    Foodie --- UC38
-    Foodie --- UC39
-    Foodie --- UC40
-    Foodie --- UC41
-    Foodie --- UC42
-    Foodie --- UC43
+    %% MÓDULO: GESTIÓN DE ROLES
+    subgraph Roles["GESTIÓN DE ROLES"]
+        UC14(("Crear Rol"))
+        UC15(("Listar Roles"))
+        UC16(("Modificar<br/>Rol"))
+        UC17(("Eliminar Rol"))
+        UC18(("Asignar<br/>Permisos"))
+    end
     
-    %% Relaciones Restaurante
-    Restaurante --- UC02
-    Restaurante --- UC03
-    Restaurante --- UC05
-    Restaurante --- UC06
-    Restaurante --- UC34
-    Restaurante --- UC35
-    Restaurante --- UC36
-    Restaurante --- UC30
-    Restaurante --- UC39
-    Restaurante --- UC48
-    Restaurante --- UC49
-    Restaurante --- UC50
-    Restaurante --- UC51
-    Restaurante --- UC52
-    Restaurante --- UC53
-    Restaurante --- UC54
-    Restaurante --- UC55
-    Restaurante --- UC56
-    Restaurante --- UC57
-    Restaurante --- UC58
-    Restaurante --- UC59
+    %% MÓDULO: APLICACIÓN FOODIE
+    subgraph Form["APLICACIÓN FOODIE"]
+        UC19(("Completar<br/>Formulario"))
+        UC20(("Ver Mi<br/>Formulario"))
+        UC21(("Editar<br/>Formulario"))
+        UC22(("Verificar<br/>Estado"))
+        UC23(("Revisar<br/>Aplicaciones"))
+        UC24(("Aprobar<br/>Aplicación"))
+        UC25(("Rechazar<br/>Aplicación"))
+        UC26(("Listar<br/>Formularios"))
+    end
     
-    %% Relaciones Administrador
-    Admin --- UC07
-    Admin --- UC08
-    Admin --- UC09
-    Admin --- UC10
-    Admin --- UC11
-    Admin --- UC12
-    Admin --- UC13
-    Admin --- UC14
-    Admin --- UC15
-    Admin --- UC16
-    Admin --- UC17
-    Admin --- UC18
-    Admin --- UC23
-    Admin --- UC24
-    Admin --- UC25
-    Admin --- UC26
-    Admin --- UC37
-    Admin --- UC44
-    Admin --- UC47
-    Admin --- UC48
-    Admin --- UC60
-    Admin --- UC61
-    Admin --- UC62
-    Admin --- UC63
-    Admin --- UC64
+    %% MÓDULO: GESTIÓN DE RESERVAS
+    subgraph Res["GESTIÓN DE RESERVAS"]
+        UC27(("Explorar<br/>Restaurantes"))
+        UC28(("Crear<br/>Reserva"))
+        UC29(("Ver Mis<br/>Reservas"))
+        UC30(("Ver Detalle<br/>Reserva"))
+        UC31(("Modificar<br/>Reserva"))
+        UC32(("Cancelar<br/>Reserva"))
+        UC33(("Verificar<br/>Cancelación"))
+        UC34(("Ver Reservas<br/>Restaurante"))
+        UC35(("Filtrar por<br/>Estado"))
+        UC36(("Filtrar por<br/>Fecha"))
+        UC37(("Ver Todas<br/>Reservas"))
+    end
     
-    %% Relaciones Include/Extend
-    UC28 -.->|include| UC27
-    UC38 -.->|include| UC42
-    UC38 -.->|include| UC43
-    UC45 -.->|extend| UC38
-    UC46 -.->|extend| UC47
-    UC50 -.->|include| UC57
-    UC51 -.->|include| UC57
-    UC59 -.->|include| UC50
+    %% MÓDULO: GESTIÓN DE ENTREGABLES
+    subgraph Entg["GESTIÓN DE ENTREGABLES"]
+        UC38(("Subir<br/>Entregables"))
+        UC39(("Ver<br/>Entregables"))
+        UC40(("Editar<br/>Entregables"))
+        UC41(("Eliminar<br/>Entregables"))
+        UC42(("Registrar<br/>Monto"))
+        UC43(("Validar<br/>Enlaces"))
+    end
+    
+    %% MÓDULO: ESTADOS DE RESERVA
+    subgraph Est["ESTADOS DE RESERVA"]
+        UC44(("Cambiar<br/>Estado"))
+        UC45(("Marcar<br/>Completada"))
+        UC46(("Marcar<br/>Falta Grave"))
+        UC47(("Actualizar<br/>Estados"))
+    end
+    
+    %% MÓDULO: ANALYTICS Y REPORTES CORE
+    subgraph Ana["ANALYTICS Y REPORTES CORE"]
+        UC48(("Dashboard<br/>Analytics"))
+        UC49(("Consultar<br/>Métricas"))
+        UC50(("Análisis<br/>Ingresos"))
+        UC51(("Análisis<br/>Temporal"))
+        UC52(("Ver<br/>Predicciones"))
+        UC53(("Horas<br/>Pico"))
+        UC54(("Ranking<br/>Foodies"))
+        UC55(("Estacionalidad"))
+        UC56(("Generar<br/>Reporte"))
+        UC57(("Filtrar<br/>Fecha"))
+        UC58(("Comparar<br/>Periodos"))
+        UC59(("Regresión<br/>Lineal"))
+    end
+    
+    %% MÓDULO: ADMINISTRACIÓN
+    subgraph Adm["ADMINISTRACIÓN"]
+        UC60(("Ver Logs"))
+        UC61(("Monitorear<br/>Salud"))
+        UC62(("Configuración"))
+        UC63(("Tareas<br/>Programadas"))
+        UC64(("Estadísticas<br/>Globales"))
+    end
+    
+    %% RELACIONES: USUARIO NO AUTENTICADO
+    U --> UC01
+    U --> UC02
+    U --> UC04
+    
+    %% RELACIONES: FOODIE
+    F --> UC02
+    F --> UC03
+    F --> UC05
+    F --> UC06
+    F --> UC19
+    F --> UC20
+    F --> UC21
+    F --> UC22
+    F --> UC27
+    F --> UC28
+    F --> UC29
+    F --> UC30
+    F --> UC31
+    F --> UC32
+    F --> UC33
+    F --> UC38
+    F --> UC39
+    F --> UC40
+    F --> UC41
+    F --> UC42
+    F --> UC43
+    
+    %% RELACIONES: RESTAURANTE
+    R --> UC02
+    R --> UC03
+    R --> UC05
+    R --> UC06
+    R --> UC34
+    R --> UC35
+    R --> UC36
+    R --> UC30
+    R --> UC39
+    R --> UC48
+    R --> UC49
+    R --> UC50
+    R --> UC51
+    R --> UC52
+    R --> UC53
+    R --> UC54
+    R --> UC55
+    R --> UC56
+    R --> UC57
+    R --> UC58
+    R --> UC59
+    
+    %% RELACIONES: ADMINISTRADOR
+    A --> UC07
+    A --> UC08
+    A --> UC09
+    A --> UC10
+    A --> UC11
+    A --> UC12
+    A --> UC13
+    A --> UC14
+    A --> UC15
+    A --> UC16
+    A --> UC17
+    A --> UC18
+    A --> UC23
+    A --> UC24
+    A --> UC25
+    A --> UC26
+    A --> UC37
+    A --> UC44
+    A --> UC47
+    A --> UC48
+    A --> UC60
+    A --> UC61
+    A --> UC62
+    A --> UC63
+    A --> UC64
+    
+    %% RELACIONES INCLUDE/EXTEND
+    UC28 -.->|<<include>>| UC27
+    UC38 -.->|<<include>>| UC42
+    UC38 -.->|<<include>>| UC43
+    UC45 -.->|<<extend>>| UC38
+    UC46 -.->|<<extend>>| UC47
+    UC50 -.->|<<include>>| UC57
+    UC51 -.->|<<include>>| UC57
+    UC59 -.->|<<include>>| UC50
+    
+    style U fill:#e1f5ff
+    style F fill:#fff3e0
+    style R fill:#f3e5f5
+    style A fill:#e8f5e9
 ```
 
 ---

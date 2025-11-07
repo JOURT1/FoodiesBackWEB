@@ -1,23 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\USER\\Desktop\\WEB\\FoodiesBackWEB\\UsersApi\\UsersApi.csproj": {}
+    "C:\\Users\\jhoel\\OneDrive\\Escritorio\\WEB\\FoodiesBackWEB\\UsersApi\\UsersApi.csproj": {}
   },
   "projects": {
-    "C:\\Users\\USER\\Desktop\\WEB\\FoodiesBackWEB\\UsersApi\\UsersApi.csproj": {
+    "C:\\Users\\jhoel\\OneDrive\\Escritorio\\WEB\\FoodiesBackWEB\\UsersApi\\UsersApi.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\USER\\Desktop\\WEB\\FoodiesBackWEB\\UsersApi\\UsersApi.csproj",
+        "projectUniqueName": "C:\\Users\\jhoel\\OneDrive\\Escritorio\\WEB\\FoodiesBackWEB\\UsersApi\\UsersApi.csproj",
         "projectName": "UsersApi",
-        "projectPath": "C:\\Users\\USER\\Desktop\\WEB\\FoodiesBackWEB\\UsersApi\\UsersApi.csproj",
-        "packagesPath": "C:\\Users\\USER\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\USER\\Desktop\\WEB\\FoodiesBackWEB\\UsersApi\\obj\\",
+        "projectPath": "C:\\Users\\jhoel\\OneDrive\\Escritorio\\WEB\\FoodiesBackWEB\\UsersApi\\UsersApi.csproj",
+        "packagesPath": "C:\\Users\\jhoel\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\jhoel\\OneDrive\\Escritorio\\WEB\\FoodiesBackWEB\\UsersApi\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\USER\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\jhoel\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -107,7 +107,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.304/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.300/PortableRuntimeIdentifierGraph.json"
         }
       }
     }

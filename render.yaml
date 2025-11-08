@@ -1,0 +1,123 @@
+services:
+  # 1. UsersApi
+  - type: web
+    name: foodies-users-api
+    runtime: dotnet
+    plan: free
+    buildCommand: dotnet publish -c Release -o out UsersApi/UsersApi.csproj
+    startCommand: dotnet out/UsersApi.dll
+    envVars:
+      - key: ASPNETCORE_URLS
+        value: http://0.0.0.0:$PORT
+      - key: ASPNETCORE_ENVIRONMENT
+        value: Production
+      - key: ConnectionStrings__ConnectionDataBase
+        value: postgresql://usersdb_i1k2_user:q4lJ5MVqcsys9BJCcaC4WCQE1PE9hEox@dpg-d46vkuhr0fns73bh4a90-a.oregon-postgres.render.com/usersdb_i1k2
+      - key: Jwt__SecretKey
+        value: mi-clave-secreta-super-segura-de-32-caracteres-minimo-para-jwt-tokens-2024
+      - key: Jwt__Issuer
+        sync: false
+      - key: Jwt__Audience
+        value: foodies-api
+      - key: Jwt__Authority
+        sync: false
+      - key: Jwt__ExpirationMinutes
+        value: 60
+  - type: web
+    name: foodies-formulario-api
+    runtime: dotnet
+    plan: free
+    buildCommand: dotnet publish -c Release -o out FormularioFoodieApi/FormularioFoodieApi.csproj
+    startCommand: dotnet out/FormularioFoodieApi.dll
+    envVars:
+      - key: ASPNETCORE_URLS
+        value: http://0.0.0.0:$PORT
+      - key: ASPNETCORE_ENVIRONMENT
+        value: Production
+      - key: ConnectionStrings__ConnectionDataBase
+        value: postgresql://usersdb_i1k2_user:q4lJ5MVqcsys9BJCcaC4WCQE1PE9hEox@dpg-d46vkuhr0fns73bh4a90-a.oregon-postgres.render.com/formulariofoodiedb
+      - key: Jwt__SecretKey
+        value: mi-clave-secreta-super-segura-de-32-caracteres-minimo-para-jwt-tokens-2024
+      - key: Jwt__Issuer
+        sync: false
+      - key: Jwt__Audience
+        value: foodies-api
+      - key: Jwt__Authority
+        sync: false
+      - key: Jwt__ExpirationMinutes
+        value: 60
+      - key: ApiSettings__UsersApiBaseUrl
+        fromService:
+          type: web
+          name: foodies-users-api
+          property: host
+
+  # 3. ReservasApi
+  - type: web
+    name: foodies-reservas-api
+    runtime: dotnet
+    plan: free
+    buildCommand: dotnet publish -c Release -o out ReservasApi/ReservasApi.csproj
+    startCommand: dotnet out/ReservasApi.dll
+    envVars:
+      - key: ASPNETCORE_URLS
+        value: http://0.0.0.0:$PORT
+      - key: ASPNETCORE_ENVIRONMENT
+        value: Production
+      - key: ConnectionStrings__ConnectionDataBase
+        value: postgresql://usersdb_i1k2_user:q4lJ5MVqcsys9BJCcaC4WCQE1PE9hEox@dpg-d46vkuhr0fns73bh4a90-a.oregon-postgres.render.com/reservasdb
+      - key: Jwt__SecretKey
+        value: mi-clave-secreta-super-segura-de-32-caracteres-minimo-para-jwt-tokens-2024
+      - key: Jwt__Issuer
+        sync: false
+      - key: Jwt__Audience
+        value: foodies-api
+      - key: Jwt__Authority
+        sync: false
+      - key: Jwt__ExpirationMinutes
+        value: 60
+      - key: Services__UserApi
+        fromService:
+          type: web
+          name: foodies-users-api
+          property: host
+  - type: web
+    name: foodies-gateway
+    runtime: dotnet
+    plan: free
+    buildCommand: dotnet publish -c Release -o out GatewayApi/GatewayApi.csproj
+    startCommand: dotnet out/GatewayApi.dll
+    envVars:
+      - key: ASPNETCORE_URLS
+        value: http://0.0.0.0:$PORT
+      - key: ASPNETCORE_ENVIRONMENT
+        value: Production
+      - key: Jwt__SecretKey
+        value: mi-clave-secreta-super-segura-de-32-caracteres-minimo-para-jwt-tokens-2024
+      - key: Jwt__Issuer
+        fromService:
+          type: web
+          name: foodies-users-api
+          property: host
+      - key: Jwt__Audience
+        value: foodies-api
+      - key: ReverseProxy__Clusters__users-cluster__Destinations__destination1__Address
+        fromService:
+          type: web
+          name: foodies-users-api
+          property: host
+      - key: ReverseProxy__Clusters__formulario-foodie-cluster__Destinations__destination1__Address
+        fromService:
+          type: web
+          name: foodies-formulario-api
+          property: host
+      - key: ReverseProxy__Clusters__reservas-cluster__Destinations__destination1__Address
+        fromService:
+          type: web
+          name: foodies-reservas-api
+          property: host
+      - key: FRONTEND_ORIGIN
+        value: https://tu-frontend.onrender.com  # Actualizarás después
+
+databases: []
+# No se crearán nuevas databases, usaremos las que ya existen manualmente

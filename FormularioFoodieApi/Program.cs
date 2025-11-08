@@ -68,10 +68,14 @@ builder.Services.AddOpenApi(options =>
 
 var app = builder.Build();
 
-using (var scope = app.Services.CreateScope())
+// Solo ejecutar migraciones en desarrollo
+if (app.Environment.IsDevelopment())
 {
-    var context = scope.ServiceProvider.GetRequiredService<FormularioFoodieDbContext>();
-    context.Database.Migrate();
+    using (var scope = app.Services.CreateScope())
+    {
+        var context = scope.ServiceProvider.GetRequiredService<FormularioFoodieDbContext>();
+        context.Database.Migrate();
+    }
 }
 
 if (app.Environment.IsDevelopment())

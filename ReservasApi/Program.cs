@@ -85,17 +85,21 @@ app.UseAuthorization();
 app.MapControllers();
 
 // Database Migration on startup
-using (var scope = app.Services.CreateScope())
+// Solo ejecutar migraciones en desarrollo
+if (app.Environment.IsDevelopment())
 {
-    var context = scope.ServiceProvider.GetRequiredService<ReservasDbContext>();
-    try
+    using (var scope = app.Services.CreateScope())
     {
-        context.Database.Migrate();
-        Console.WriteLine("Database migrated successfully - ReservasApi");
-    }
-    catch (Exception ex)
-    {
-        Console.WriteLine($"Database migration failed: {ex.Message}");
+        var context = scope.ServiceProvider.GetRequiredService<ReservasDbContext>();
+        try
+        {
+            context.Database.Migrate();
+            Console.WriteLine("Database migrated successfully - ReservasApi");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Database migration failed: {ex.Message}");
+        }
     }
 }
 

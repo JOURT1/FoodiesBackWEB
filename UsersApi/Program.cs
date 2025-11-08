@@ -72,20 +72,24 @@ builder.Services.AddOpenApi(options =>
 
 var app = builder.Build();
 
-using (var scope = app.Services.CreateScope())
+// Solo ejecutar migraciones en desarrollo
+if (app.Environment.IsDevelopment())
 {
-    var context = scope.ServiceProvider.GetRequiredService<UsersDbContext>();
-    context.Database.Migrate();
-
-    // Ejecutar script inicial para crear roles
-    var initialScriptPath = Path.Combine(AppContext.BaseDirectory, "Scripts", "InitialRoles.sql");
-    if (File.Exists(initialScriptPath))
+    using (var scope = app.Services.CreateScope())
     {
-        var sql = File.ReadAllText(initialScriptPath);
-        using var conn = new NpgsqlConnection(connectionString);
-        conn.Open();
-        using var cmd = new NpgsqlCommand(sql, conn);
-        cmd.ExecuteNonQuery();
+        var context = scope.ServiceProvider.GetRequiredService<UsersDbContext>();
+        context.Database.Migrate();
+
+        // Ejecutar script inicial para crear roles
+        var initialScriptPath = Path.Combine(AppContext.BaseDirectory, "Scripts", "InitialRoles.sql");
+        if (File.Exists(initialScriptPath))
+        {
+            var sql = File.ReadAllText(initialScriptPath);
+            using var conn = new NpgsqlConnection(connectionString);
+            conn.Open();
+            using var cmd = new NpgsqlCommand(sql, conn);
+            cmd.ExecuteNonQuery();
+        }
     }
 }
 

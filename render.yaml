@@ -2,7 +2,7 @@ services:
   # 1. UsersApi
   - type: web
     name: foodies-users-api
-    runtime: dotnet
+    env: dotnet
     plan: free
     buildCommand: dotnet publish -c Release -o out UsersApi/UsersApi.csproj
     startCommand: dotnet out/UsersApi.dll
@@ -25,7 +25,7 @@ services:
         value: 60
   - type: web
     name: foodies-formulario-api
-    runtime: dotnet
+    env: dotnet
     plan: free
     buildCommand: dotnet publish -c Release -o out FormularioFoodieApi/FormularioFoodieApi.csproj
     startCommand: dotnet out/FormularioFoodieApi.dll
@@ -55,7 +55,7 @@ services:
   # 3. ReservasApi
   - type: web
     name: foodies-reservas-api
-    runtime: dotnet
+    env: dotnet
     plan: free
     buildCommand: dotnet publish -c Release -o out ReservasApi/ReservasApi.csproj
     startCommand: dotnet out/ReservasApi.dll
@@ -83,7 +83,7 @@ services:
           property: host
   - type: web
     name: foodies-gateway
-    runtime: dotnet
+    env: dotnet
     plan: free
     buildCommand: dotnet publish -c Release -o out GatewayApi/GatewayApi.csproj
     startCommand: dotnet out/GatewayApi.dll

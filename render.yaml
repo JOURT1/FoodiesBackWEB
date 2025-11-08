@@ -2,10 +2,10 @@ services:
   # 1. UsersApi
   - type: web
     name: foodies-users-api
-    env: dotnet
+    env: docker
     plan: free
-    buildCommand: dotnet publish -c Release -o out UsersApi/UsersApi.csproj
-    startCommand: dotnet out/UsersApi.dll
+    dockerfilePath: ./UsersApi/Dockerfile
+    dockerContext: .
     envVars:
       - key: ASPNETCORE_URLS
         value: http://0.0.0.0:$PORT
@@ -25,10 +25,10 @@ services:
         value: 60
   - type: web
     name: foodies-formulario-api
-    env: dotnet
+    env: docker
     plan: free
-    buildCommand: dotnet publish -c Release -o out FormularioFoodieApi/FormularioFoodieApi.csproj
-    startCommand: dotnet out/FormularioFoodieApi.dll
+    dockerfilePath: ./FormularioFoodieApi/Dockerfile
+    dockerContext: .
     envVars:
       - key: ASPNETCORE_URLS
         value: http://0.0.0.0:$PORT
@@ -55,10 +55,10 @@ services:
   # 3. ReservasApi
   - type: web
     name: foodies-reservas-api
-    env: dotnet
+    env: docker
     plan: free
-    buildCommand: dotnet publish -c Release -o out ReservasApi/ReservasApi.csproj
-    startCommand: dotnet out/ReservasApi.dll
+    dockerfilePath: ./ReservasApi/Dockerfile
+    dockerContext: .
     envVars:
       - key: ASPNETCORE_URLS
         value: http://0.0.0.0:$PORT
@@ -83,10 +83,10 @@ services:
           property: host
   - type: web
     name: foodies-gateway
-    env: dotnet
+    env: docker
     plan: free
-    buildCommand: dotnet publish -c Release -o out GatewayApi/GatewayApi.csproj
-    startCommand: dotnet out/GatewayApi.dll
+    dockerfilePath: ./GatewayApi/Dockerfile
+    dockerContext: .
     envVars:
       - key: ASPNETCORE_URLS
         value: http://0.0.0.0:$PORT

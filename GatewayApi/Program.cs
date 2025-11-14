@@ -47,16 +47,18 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("PermitirTodo", policy =>
     {
-        policy.AllowAnyOrigin()
+        policy.WithOrigins("http://localhost:4200", "http://localhost")
               .AllowAnyHeader()
-              .AllowAnyMethod();
+              .AllowAnyMethod()
+              .AllowCredentials();
     });
 
     options.AddPolicy("Produccion", policy =>
     {
-        policy.WithOrigins("https://dominio.com")
+        policy.WithOrigins("https://tu-dominio-frontend.com", "http://localhost:4200")
               .AllowAnyHeader()
-              .AllowAnyMethod();
+              .AllowAnyMethod()
+              .AllowCredentials();
     });
 });
 

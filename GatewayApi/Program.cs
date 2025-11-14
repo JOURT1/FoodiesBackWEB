@@ -43,19 +43,21 @@ builder.Services.AddAuthorizationBuilder()
         policy.RequireAuthenticatedUser();
     });
 
+// Configurar CORS con orígenes desde variables de entorno
+var frontendOrigin = Environment.GetEnvironmentVariable("FRONTEND_ORIGIN") ?? "https://foodies-frontend-42bd.onrender.com";
+var allowedOrigins = new List<string> { frontendOrigin };
+
+// Siempre permitir localhost para desarrollo
+if (!allowedOrigins.Contains("http://localhost:4200"))
+    allowedOrigins.Add("http://localhost:4200");
+if (!allowedOrigins.Contains("http://localhost:3000"))
+    allowedOrigins.Add("http://localhost:3000");
+
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("PermitirTodo", policy =>
+    options.AddPolicy("AllowConfiguredOrigins", policy =>
     {
-        policy.WithOrigins("http://localhost:4200", "http://localhost")
-              .AllowAnyHeader()
-              .AllowAnyMethod()
-              .AllowCredentials();
-    });
-
-    options.AddPolicy("Produccion", policy =>
-    {
-        policy.WithOrigins("https://tu-dominio-frontend.com", "http://localhost:4200")
+        policy.WithOrigins(allowedOrigins.ToArray())
               .AllowAnyHeader()
               .AllowAnyMethod()
               .AllowCredentials();
@@ -64,10 +66,7 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())
-    app.UseCors("PermitirTodo");
-else
-    app.UseCors("Produccion");
+app.UseCors("AllowConfiguredOrigins");
 
 app.UseAuthentication();
 app.UseAuthorization();

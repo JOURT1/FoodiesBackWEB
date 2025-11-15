@@ -8,9 +8,9 @@ namespace UsersApi.Helpers
     {
         private const int SaltSize = 16;
         private const int HashSize = 32;
-        private const int Iterations = 4;
-        private const int MemorySize = 1024 * 1024; // 1 GB
-        private const int DegreeOfParallelism = 8;
+        private const int Iterations = 2;
+        private const int MemorySize = 32768; // 32 MB (optimizado para Render 256MB RAM)
+        private const int DegreeOfParallelism = 1;
 
         public static string HashPassword(string password)
         {

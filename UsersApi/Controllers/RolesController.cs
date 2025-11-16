@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using UsersApi.Dtos.Request;
 using UsersApi.Services.Interfaces;
 
 namespace UsersApi.Controllers
@@ -27,14 +28,8 @@ namespace UsersApi.Controllers
         [Authorize(Policy = "AdminOnly")]
         public async Task<IActionResult> Create([FromBody] RolCreateRequestDto requestDto)
         {
-            var rol = await rolService.CreateAsync(request.Nombre, request.Descripcion);
+            var rol = await rolService.CreateAsync(requestDto.Nombre, requestDto.Descripcion);
             return CreatedAtAction(nameof(GetById), new { id = rol.Id }, rol);
         }
-    }
-
-    public class CreateRolRequest
-    {
-        public required string Nombre { get; set; }
-        public string? Descripcion { get; set; }
     }
 }

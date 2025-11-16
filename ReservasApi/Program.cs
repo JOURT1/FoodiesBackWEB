@@ -50,11 +50,17 @@ builder.Services.AddAuthentication(options =>
         ValidateLifetime = true,
         ValidateIssuerSigningKey = true,
         IssuerSigningKey = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(secretKey)),
-        ClockSkew = TimeSpan.Zero
+        ClockSkew = TimeSpan.Zero,
+        RoleClaimType = System.Security.Claims.ClaimTypes.Role
     };
 });
 
-builder.Services.AddAuthorization();
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("AdminOnly", policy =>
+        policy.RequireAssertion(context =>
+            context.User.IsInRole("admin") || context.User.IsInRole("Admin")));
+});
 
 // CORS Configuration
 builder.Services.AddCors(options =>

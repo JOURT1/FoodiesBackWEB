@@ -18,7 +18,7 @@ namespace ReservasApi.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Policy = "AdminOnly")]
         public async Task<IActionResult> GetAll()
         {
             var entregables = await _entregableService.GetAllEntregablesAsync();

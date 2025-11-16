@@ -19,7 +19,7 @@ namespace ReservasApi.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Policy = "AdminOnly")]
         public async Task<IActionResult> GetAll()
         {
             var reservas = await _reservaService.GetAllReservasAsync();
@@ -113,7 +113,7 @@ namespace ReservasApi.Controllers
         }
 
         [HttpPost("actualizar-estados")]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Policy = "AdminOnly")]
         public async Task<IActionResult> ActualizarEstados()
         {
             await _reservaService.ActualizarEstadosAutomaticoAsync();
@@ -142,7 +142,7 @@ namespace ReservasApi.Controllers
         }
 
         [HttpGet("por-restaurante")]
-        [Authorize(Roles = "restaurante,Admin")]
+        [Authorize(Roles = "restaurante")]
         public async Task<IActionResult> GetByRestaurante()
         {
             var usuarioId = GetUsuarioIdFromToken();

@@ -39,7 +39,7 @@ services:
       - key: Jwt__SecretKey
         value: mi-clave-secreta-super-segura-de-32-caracteres-minimo-para-jwt-tokens-2024
       - key: Jwt__Issuer
-        sync: false
+        value: https://foodies-users-api.onrender.com
       - key: Jwt__Audience
         value: foodies-api
       - key: Jwt__Authority
@@ -47,10 +47,7 @@ services:
       - key: Jwt__ExpirationMinutes
         value: 60
       - key: ApiSettings__UsersApiBaseUrl
-        fromService:
-          type: web
-          name: foodies-users-api
-          property: host
+        value: https://foodies-users-api.onrender.com
 
   # 3. ReservasApi
   - type: web
@@ -69,7 +66,7 @@ services:
       - key: Jwt__SecretKey
         value: mi-clave-secreta-super-segura-de-32-caracteres-minimo-para-jwt-tokens-2024
       - key: Jwt__Issuer
-        sync: false
+        value: https://foodies-users-api.onrender.com
       - key: Jwt__Audience
         value: foodies-api
       - key: Jwt__Authority
@@ -77,10 +74,7 @@ services:
       - key: Jwt__ExpirationMinutes
         value: 60
       - key: Services__UserApi
-        fromService:
-          type: web
-          name: foodies-users-api
-          property: host
+        value: https://foodies-users-api.onrender.com
 
   # 4. AdminCoreApi
   - type: web
@@ -97,27 +91,15 @@ services:
       - key: Jwt__SecretKey
         value: mi-clave-secreta-super-segura-de-32-caracteres-minimo-para-jwt-tokens-2024
       - key: Jwt__Issuer
-        fromService:
-          type: web
-          name: foodies-users-api
-          property: host
+        value: https://foodies-users-api.onrender.com
       - key: Jwt__Audience
         value: foodies-api
       - key: ApiUrls__UsersApi
-        fromService:
-          type: web
-          name: foodies-users-api
-          property: host
+        value: https://foodies-users-api.onrender.com
       - key: ApiUrls__ReservasApi
-        fromService:
-          type: web
-          name: foodies-reservas-api
-          property: host
+        value: https://foodies-reservas-api.onrender.com
       - key: ApiUrls__FormularioFoodieApi
-        fromService:
-          type: web
-          name: foodies-formulario-api
-          property: host
+        value: https://foodies-formulario-api.onrender.com
 
   # 5. Gateway
   - type: web
@@ -134,32 +116,17 @@ services:
       - key: Jwt__SecretKey
         value: mi-clave-secreta-super-segura-de-32-caracteres-minimo-para-jwt-tokens-2024
       - key: Jwt__Issuer
-        fromService:
-          type: web
-          name: foodies-users-api
-          property: host
+        value: https://foodies-users-api.onrender.com
       - key: Jwt__Audience
         value: foodies-api
       - key: ReverseProxy__Clusters__users-cluster__Destinations__destination1__Address
-        fromService:
-          type: web
-          name: foodies-users-api
-          property: host
+        value: https://foodies-users-api.onrender.com
       - key: ReverseProxy__Clusters__formulario-foodie-cluster__Destinations__destination1__Address
-        fromService:
-          type: web
-          name: foodies-formulario-api
-          property: host
+        value: https://foodies-formulario-api.onrender.com
       - key: ReverseProxy__Clusters__reservas-cluster__Destinations__destination1__Address
-        fromService:
-          type: web
-          name: foodies-reservas-api
-          property: host
+        value: https://foodies-reservas-api.onrender.com
       - key: ReverseProxy__Clusters__admincore-cluster__Destinations__destination1__Address
-        fromService:
-          type: web
-          name: foodies-admincore-api
-          property: host
+        value: https://foodies-admincore-api.onrender.com
       - key: FRONTEND_ORIGIN
         value: https://tu-frontend.onrender.com  # Actualizarás después
 

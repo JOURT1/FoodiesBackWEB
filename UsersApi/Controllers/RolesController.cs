@@ -24,8 +24,8 @@ namespace UsersApi.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Create([FromBody] CreateRolRequest request)
+        [Authorize(Policy = "AdminOnly")]
+        public async Task<IActionResult> Create([FromBody] RolCreateRequestDto requestDto)
         {
             var rol = await rolService.CreateAsync(request.Nombre, request.Descripcion);
             return CreatedAtAction(nameof(GetById), new { id = rol.Id }, rol);

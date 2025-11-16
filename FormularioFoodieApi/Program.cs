@@ -50,7 +50,12 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
-builder.Services.AddAuthorization();
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("AdminOnly", policy => 
+        policy.RequireAssertion(context => 
+            context.User.IsInRole("admin") || context.User.IsInRole("Admin")));
+});
 
 builder.Services.AddOpenApi(options =>
 {

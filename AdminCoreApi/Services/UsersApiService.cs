@@ -9,12 +9,17 @@ namespace AdminCoreApi.Services
     {
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IReservasApiService _reservasService;
         private readonly JsonSerializerOptions _jsonOptions;
 
-        public UsersApiService(IHttpClientFactory httpClientFactory, IHttpContextAccessor httpContextAccessor)
+        public UsersApiService(
+            IHttpClientFactory httpClientFactory, 
+            IHttpContextAccessor httpContextAccessor,
+            IReservasApiService reservasService)
         {
             _httpClientFactory = httpClientFactory;
             _httpContextAccessor = httpContextAccessor;
+            _reservasService = reservasService;
             _jsonOptions = new JsonSerializerOptions
             {
                 PropertyNameCaseInsensitive = true
@@ -47,9 +52,28 @@ namespace AdminCoreApi.Services
 
         public async Task<bool> DeleteUserAsync(int id)
         {
-            var client = CreateAuthorizedClient("UsersApi");
-            var response = await client.DeleteAsync($"api/Users/{id}");
-            return response.IsSuccessStatusCode;
+            try
+            {
+                // Primero obtener todas las reservas del usuario
+                var todasReservas = await _reservasService.GetAllReservasAsync();
+                var reservasDelUsuario = todasReservas.Where(r => r.UsuarioId == id).ToList();
+
+                // Eliminar todas las reservas del usuario primero
+                foreach (var reserva in reservasDelUsuario)
+                {
+                    await _reservasService.DeleteReservaAsync(reserva.Id);
+                }
+
+                // Luego eliminar el usuario
+                var client = CreateAuthorizedClient("UsersApi");
+                var response = await client.DeleteAsync($"api/Users/{id}");
+                return response.IsSuccessStatusCode;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error al eliminar usuario {id}: {ex.Message}");
+                return false;
+            }
         }
 
         public async Task<List<RolResponseDto>> GetAllRolesAsync()

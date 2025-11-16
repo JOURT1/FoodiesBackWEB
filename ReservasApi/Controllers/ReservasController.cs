@@ -44,7 +44,7 @@ namespace ReservasApi.Controllers
             if (usuarioId == null)
                 return Unauthorized();
 
-            var isAdmin = User.IsInRole("Admin");
+            var isAdmin = User.IsInRole("admin") || User.IsInRole("Admin");
             var reserva = isAdmin 
                 ? await _reservaService.GetReservaByIdAsync(id)
                 : await _reservaService.GetReservaByIdAndUsuarioAsync(id, usuarioId.Value);
@@ -157,7 +157,7 @@ namespace ReservasApi.Controllers
             // Buscar un rol que no sea "restaurante" (ese sería el nombre del restaurante)
             var nombreRestaurante = userRoles.FirstOrDefault(role => 
                 role != "restaurante" && 
-                role != "Admin" && 
+                !role.Equals("Admin", StringComparison.OrdinalIgnoreCase) && 
                 role != "usuario" && 
                 role != "foodie");
             

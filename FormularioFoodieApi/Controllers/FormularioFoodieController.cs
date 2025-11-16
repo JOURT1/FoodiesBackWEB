@@ -83,7 +83,7 @@ namespace FormularioFoodieApi.Controllers
         }
 
         [HttpDelete("{id:int}")]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Policy = "AdminOnly")]
         public async Task<IActionResult> Delete(int id)
         {
             var resultado = await formularioService.DeleteAsync(id);

@@ -56,13 +56,33 @@ namespace UsersApi.Data.Repositories
 
         public async Task<bool> DeleteAsync(int id)
         {
-            var usuario = await _context.Usuarios.FindAsync(id);
+            var usuario = await _context.Usuarios
+                .Include(u => u.UsuarioRoles)
+                .FirstOrDefaultAsync(u => u.Id == id);
+            
             if (usuario == null)
                 return false;
 
+            // Eliminar primero las relaciones UsuarioRol (aunque el cascade debería hacerlo)
+            if (usuario.UsuarioRoles.Any())
+            {
+                _context.UsuarioRoles.RemoveRange(usuario.UsuarioRoles);
+            }
+
+            // Luego eliminar el usuario
             _context.Usuarios.Remove(usuario);
-            await _context.SaveChangesAsync();
-            return true;
+            
+            try
+            {
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                // Log the exception (en producción usar un logger real)
+                Console.WriteLine($"Error al eliminar usuario {id}: {ex.Message}");
+                throw new InvalidOperationException($"No se puede eliminar el usuario. Puede tener datos relacionados en otras tablas.", ex);
+            }
         }
 
         public async Task<bool> ExisteCorreoAsync(string correo)

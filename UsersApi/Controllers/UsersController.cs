@@ -49,7 +49,7 @@ namespace UsersApi.Controllers
         }
 
         [HttpDelete("{id:int}")]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Policy = "AdminOnly")]
         public async Task<IActionResult> Delete(int id)
         {
             var resultado = await usuarioService.DeleteAsync(id);
@@ -65,7 +65,7 @@ namespace UsersApi.Controllers
         }
 
         [HttpDelete("{id:int}/roles/{roleName}")]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Policy = "AdminOnly")]
         public async Task<IActionResult> RemoveRoleFromUser(int id, string roleName)
         {
             var resultado = await usuarioService.RemoveRoleFromUserAsync(id, roleName);

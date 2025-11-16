@@ -9,6 +9,8 @@ namespace UsersApi.Services.Interfaces
         Task<UsuarioResponseDto> GetByIdAsync(int id);
         Task<UsuarioResponseDto> CreateAsync(UsuarioCreateRequestDto requestDto);
         Task<UsuarioResponseDto> UpdateAsync(int id, UsuarioUpdateRequestDto requestDto);
+        Task<bool> DeleteAsync(int id);
         Task<bool> AddRoleToUserAsync(int usuarioId, string roleName);
+        Task<bool> RemoveRoleFromUserAsync(int usuarioId, string roleName);
     }
 }

@@ -10,5 +10,6 @@ namespace UsersApi.Data.Repositories.Interfaces
         Task<UsuarioRol?> GetByUserAndRoleAsync(int usuarioId, int rolId);
         Task<UsuarioRol> CreateAsync(UsuarioRol usuarioRol);
         Task<UsuarioRol> UpdateAsync(UsuarioRol usuarioRol);
+        Task<bool> DeleteAsync(int id);
     }
 }

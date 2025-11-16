@@ -1,0 +1,102 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using AdminCoreApi.Services;
+using AdminCoreApi.Services.Interfaces;
+
+var builder = WebApplication.CreateBuilder(args);
+
+// Asegurar que use el puerto correcto en producción (Render)
+if (builder.Environment.IsProduction())
+{
+    var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
+    builder.WebHost.UseUrls($"http://0.0.0.0:{port}");
+}
+
+builder.Services.AddControllers();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddHttpContextAccessor();
+
+// Configurar HttpClient para comunicación con otras APIs
+builder.Services.AddHttpClient("UsersApi", client =>
+{
+    client.BaseAddress = new Uri(builder.Configuration["ApiUrls:UsersApi"] ?? "http://localhost:5001");
+});
+
+builder.Services.AddHttpClient("ReservasApi", client =>
+{
+    client.BaseAddress = new Uri(builder.Configuration["ApiUrls:ReservasApi"] ?? "http://localhost:5002");
+});
+
+builder.Services.AddHttpClient("FormularioFoodieApi", client =>
+{
+    client.BaseAddress = new Uri(builder.Configuration["ApiUrls:FormularioFoodieApi"] ?? "http://localhost:5003");
+});
+
+// Dependency Injection
+builder.Services.AddScoped<IUsersApiService, UsersApiService>();
+builder.Services.AddScoped<IReservasApiService, ReservasApiService>();
+builder.Services.AddScoped<IFormularioFoodieApiService, FormularioFoodieApiService>();
+builder.Services.AddScoped<IAnalyticsService, AnalyticsService>();
+builder.Services.AddScoped<IRolesService, RolesService>();
+
+// Configuración de JWT
+var jwtSettings = builder.Configuration.GetSection("Jwt");
+var secretKey = jwtSettings["SecretKey"] ?? throw new ArgumentNullException("JWT SecretKey is required");
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidIssuer = jwtSettings["Issuer"],
+        ValidateAudience = true,
+        ValidAudience = jwtSettings["Audience"],
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        IssuerSigningKey = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(secretKey)),
+        ClockSkew = TimeSpan.Zero
+    };
+});
+
+builder.Services.AddAuthorization();
+
+builder.Services.AddOpenApi(options =>
+{
+    options.AddDocumentTransformer((document, context, _) =>
+    {
+        document.Info = new()
+        {
+            Title = "Admin Core API",
+            Version = "v1",
+            Description = "API de administración central para gestión completa del core de FoodiesBNB"
+        };
+        return Task.CompletedTask;
+    });
+});
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll",
+        builder => builder
+            .AllowAnyOrigin()
+            .AllowAnyMethod()
+            .AllowAnyHeader());
+});
+
+var app = builder.Build();
+
+if (app.Environment.IsDevelopment())
+{
+    app.MapOpenApi();
+}
+
+app.UseCors("AllowAll");
+app.UseAuthentication();
+app.UseAuthorization();
+app.MapControllers();
+app.Run();

@@ -26,7 +26,7 @@ namespace UsersApi.Controllers
         }
 
         [HttpGet("public/{id:int}")]
-        [AllowAnonymous] // Permitir acceso sin autenticación para comunicación entre servicios
+        [AllowAnonymous]
         public async Task<IActionResult> GetByIdPublic(int id)
         {
             var usuario = await usuarioService.GetByIdAsync(id);
@@ -48,12 +48,28 @@ namespace UsersApi.Controllers
             return Ok(usuarioActualizado);
         }
 
+        [HttpDelete("{id:int}")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var resultado = await usuarioService.DeleteAsync(id);
+            return Ok(resultado);
+        }
+
         [HttpPost("{id:int}/roles")]
-        [AllowAnonymous] // Permitir acceso sin autenticación para comunicación entre servicios
+        [AllowAnonymous]
         public async Task<IActionResult> AddRoleToUser(int id, [FromBody] AddRoleRequest request)
         {
             var resultado = await usuarioService.AddRoleToUserAsync(id, request.RoleName);
             return Ok(new { success = resultado, message = resultado ? "Rol agregado exitosamente" : "No se pudo agregar el rol" });
+        }
+
+        [HttpDelete("{id:int}/roles/{roleName}")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> RemoveRoleFromUser(int id, string roleName)
+        {
+            var resultado = await usuarioService.RemoveRoleFromUserAsync(id, roleName);
+            return Ok(resultado);
         }
     }
 

@@ -118,6 +118,11 @@ namespace UsersApi.Services
             };
         }
 
+        public async Task<bool> DeleteAsync(int id)
+        {
+            return await _usuarioRepository.DeleteAsync(id);
+        }
+
         public async Task<bool> AddRoleToUserAsync(int usuarioId, string roleName)
         {
             try
@@ -162,6 +167,27 @@ namespace UsersApi.Services
                 };
 
                 await _usuarioRolRepository.CreateAsync(nuevoUsuarioRol);
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        public async Task<bool> RemoveRoleFromUserAsync(int usuarioId, string roleName)
+        {
+            try
+            {
+                var rol = await _rolRepository.GetByNameAsync(roleName);
+                if (rol == null)
+                    return false;
+
+                var usuarioRol = await _usuarioRolRepository.GetByUserAndRoleAsync(usuarioId, rol.Id);
+                if (usuarioRol == null)
+                    return false;
+
+                await _usuarioRolRepository.DeleteAsync(usuarioRol.Id);
                 return true;
             }
             catch (Exception)

@@ -54,6 +54,17 @@ namespace UsersApi.Data.Repositories
             return usuario;
         }
 
+        public async Task<bool> DeleteAsync(int id)
+        {
+            var usuario = await _context.Usuarios.FindAsync(id);
+            if (usuario == null)
+                return false;
+
+            _context.Usuarios.Remove(usuario);
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
         public async Task<bool> ExisteCorreoAsync(string correo)
         {
             return await _context.Usuarios

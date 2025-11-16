@@ -81,6 +81,45 @@ services:
           type: web
           name: foodies-users-api
           property: host
+
+  # 4. AdminCoreApi
+  - type: web
+    name: foodies-admincore-api
+    env: docker
+    plan: free
+    dockerfilePath: ./AdminCoreApi/Dockerfile
+    dockerContext: .
+    envVars:
+      - key: ASPNETCORE_URLS
+        value: http://0.0.0.0:$PORT
+      - key: ASPNETCORE_ENVIRONMENT
+        value: Production
+      - key: Jwt__SecretKey
+        value: mi-clave-secreta-super-segura-de-32-caracteres-minimo-para-jwt-tokens-2024
+      - key: Jwt__Issuer
+        fromService:
+          type: web
+          name: foodies-users-api
+          property: host
+      - key: Jwt__Audience
+        value: foodies-api
+      - key: ApiUrls__UsersApi
+        fromService:
+          type: web
+          name: foodies-users-api
+          property: host
+      - key: ApiUrls__ReservasApi
+        fromService:
+          type: web
+          name: foodies-reservas-api
+          property: host
+      - key: ApiUrls__FormularioFoodieApi
+        fromService:
+          type: web
+          name: foodies-formulario-api
+          property: host
+
+  # 5. Gateway
   - type: web
     name: foodies-gateway
     env: docker
@@ -115,6 +154,11 @@ services:
         fromService:
           type: web
           name: foodies-reservas-api
+          property: host
+      - key: ReverseProxy__Clusters__admincore-cluster__Destinations__destination1__Address
+        fromService:
+          type: web
+          name: foodies-admincore-api
           property: host
       - key: FRONTEND_ORIGIN
         value: https://tu-frontend.onrender.com  # Actualizarás después

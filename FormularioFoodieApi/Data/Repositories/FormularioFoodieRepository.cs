@@ -56,6 +56,12 @@ namespace FormularioFoodieApi.Data.Repositories
             return formulario;
         }
 
+        public async Task DeleteAsync(FormularioFoodie formulario)
+        {
+            _context.FormulariosFoodie.Remove(formulario);
+            await _context.SaveChangesAsync();
+        }
+
         public async Task<bool> ExistsForUserAsync(int usuarioId)
         {
             return await _context.FormulariosFoodie

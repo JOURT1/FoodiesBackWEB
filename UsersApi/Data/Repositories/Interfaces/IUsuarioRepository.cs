@@ -9,6 +9,7 @@ namespace UsersApi.Data.Repositories.Interfaces
         Task<Usuario?> GetByCorreoAsync(string correo);
         Task<Usuario> CreateAsync(Usuario usuario);
         Task<Usuario> UpdateAsync(Usuario usuario);
+        Task<bool> DeleteAsync(int id);
         Task<bool> ExisteCorreoAsync(string correo);
         Task<bool> ExisteCorreoAsync(string correo, int excludeId);
     }

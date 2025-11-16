@@ -37,5 +37,12 @@ namespace UsersApi.Data.Repositories
                 .OrderBy(r => r.Id)
                 .ToListAsync();
         }
+
+        public async Task<Rol> CreateAsync(Rol rol)
+        {
+            _context.Roles.Add(rol);
+            await _context.SaveChangesAsync();
+            return rol;
+        }
     }
 }

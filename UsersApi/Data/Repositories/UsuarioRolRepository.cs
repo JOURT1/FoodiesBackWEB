@@ -60,5 +60,16 @@ namespace UsersApi.Data.Repositories
             await _context.SaveChangesAsync();
             return usuarioRol;
         }
+
+        public async Task<bool> DeleteAsync(int id)
+        {
+            var usuarioRol = await _context.UsuarioRoles.FindAsync(id);
+            if (usuarioRol == null)
+                return false;
+
+            _context.UsuarioRoles.Remove(usuarioRol);
+            await _context.SaveChangesAsync();
+            return true;
+        }
     }
 }

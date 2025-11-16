@@ -96,6 +96,41 @@ namespace FormularioFoodieApi.Services
                 throw new InvalidOperationException("Ya tienes una aplicación de Foodie registrada. Solo puedes enviar una aplicación por cuenta.");
             }
 
+            // ⚠️ VALIDACIONES DE DATOS SENSIBLES EN BACKEND ⚠️
+            
+            // 1. Validación de edad mínima (dato sensible - debe ser mayor de 18 años)
+            var edad = DateTime.Today.Year - requestDto.FechaNacimiento.Year;
+            if (requestDto.FechaNacimiento.Date > DateTime.Today.AddYears(-edad)) edad--;
+            
+            if (edad < 18)
+            {
+                throw new InvalidOperationException($"Debes ser mayor de 18 años para aplicar como Foodie. Edad actual: {edad} años.");
+            }
+
+            // 2. Validación de formato de número de teléfono (dato sensible)
+            if (!System.Text.RegularExpressions.Regex.IsMatch(requestDto.NumeroPersonal, @"^\+?[\d\s\-\(\)]{7,20}$"))
+            {
+                throw new InvalidOperationException("El número de teléfono tiene un formato inválido. Debe contener entre 7 y 20 dígitos.");
+            }
+
+            // 3. Validación de formato de email (dato sensible)
+            if (!System.Text.RegularExpressions.Regex.IsMatch(requestDto.Email, @"^[^@\s]+@[^@\s]+\.[^@\s]+$"))
+            {
+                throw new InvalidOperationException("El correo electrónico tiene un formato inválido.");
+            }
+
+            // 4. Validación de seguidores mínimos
+            if (requestDto.SeguidoresInstagram < 0 || requestDto.SeguidoresTikTok < 0)
+            {
+                throw new InvalidOperationException("El número de seguidores no puede ser negativo.");
+            }
+
+            // 5. Validación de términos y condiciones (obligatorio)
+            if (!requestDto.AceptaTerminos)
+            {
+                throw new InvalidOperationException("Debes aceptar los términos y condiciones para continuar.");
+            }
+
             // Validar unicidad de datos
             await ValidateUniqueDataAsync(requestDto);
 
@@ -260,6 +295,16 @@ namespace FormularioFoodieApi.Services
         {
             var formularios = await _formularioRepository.GetByEstadoAsync(estado);
             return formularios.Select(MapToResponseDto).ToList();
+        }
+
+        public async Task<bool> DeleteAsync(int id)
+        {
+            var formulario = await _formularioRepository.GetByIdAsync(id);
+            if (formulario == null)
+                return false;
+
+            await _formularioRepository.DeleteAsync(formulario);
+            return true;
         }
 
         public async Task<object?> GetCurrentUserAsync(ClaimsPrincipal user)

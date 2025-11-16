@@ -7,7 +7,7 @@ namespace AdminCoreApi.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Policy = "AdminOnly")]
     public class RolesController(IRolesService rolesService) : ControllerBase
     {
         [HttpGet]

@@ -63,11 +63,18 @@ builder.Services.AddAuthentication(options =>
         ValidateLifetime = true,
         ValidateIssuerSigningKey = true,
         IssuerSigningKey = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(secretKey)),
-        ClockSkew = TimeSpan.Zero
+        ClockSkew = TimeSpan.Zero,
+        RoleClaimType = System.Security.Claims.ClaimTypes.Role
     };
 });
 
-builder.Services.AddAuthorization();
+// Configurar autorización con política personalizada para Admin (case-insensitive)
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("AdminOnly", policy =>
+        policy.RequireAssertion(context =>
+            context.User.IsInRole("admin") || context.User.IsInRole("Admin")));
+});
 
 builder.Services.AddOpenApi(options =>
 {

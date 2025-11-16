@@ -6,7 +6,7 @@ namespace AdminCoreApi.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Policy = "AdminOnly")]
     public class FormulariosController(IFormularioFoodieApiService formularioService) : ControllerBase
     {
         [HttpGet]

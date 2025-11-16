@@ -40,11 +40,11 @@ namespace AdminCoreApi.Dtos.Response
     {
         public int MesSiguiente { get; set; }
         public int AñoSiguiente { get; set; }
-        public required string NombreMesSiguiente { get; set; }
+        public string NombreMesSiguiente { get; set; } = string.Empty;
         public double VisitasPredichas { get; set; }
         public double Tendencia { get; set; } // Positiva o negativa
         public double PorcentajeCrecimiento { get; set; }
-        public required string InterpretacionTendencia { get; set; }
+        public string InterpretacionTendencia { get; set; } = string.Empty;
     }
 
     public class ResumenGeneralDto
@@ -62,7 +62,7 @@ namespace AdminCoreApi.Dtos.Response
 
     public class RestaurantePopularDto
     {
-        public required string Nombre { get; set; }
+        public string Nombre { get; set; } = string.Empty;
         public int TotalReservas { get; set; }
         public decimal IngresoTotal { get; set; }
     }
@@ -74,7 +74,7 @@ namespace AdminCoreApi.Dtos.Response
 
     public class RestauranteComparativoDto
     {
-        public required string Nombre { get; set; }
+        public string Nombre { get; set; } = string.Empty;
         public int TotalReservas { get; set; }
         public decimal IngresoTotal { get; set; }
         public double TasaCompletado { get; set; }

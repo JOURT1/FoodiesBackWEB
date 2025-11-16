@@ -5,8 +5,12 @@ using AdminCoreApi.Services.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Asegurar que use el puerto correcto en producción (Render)
-if (builder.Environment.IsProduction())
+// Configurar puerto según ambiente
+if (builder.Environment.IsDevelopment())
+{
+    builder.WebHost.UseUrls("http://localhost:5005");
+}
+else if (builder.Environment.IsProduction())
 {
     var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
     builder.WebHost.UseUrls($"http://0.0.0.0:{port}");

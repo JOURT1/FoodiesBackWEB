@@ -75,10 +75,10 @@ namespace AdminCoreApi.Dtos.Response
     public class RestauranteComparativoDto
     {
         public string Nombre { get; set; } = string.Empty;
-        public int TotalReservas { get; set; };
-        public decimal IngresoTotal { get; set; };
-        public double TasaCompletado { get; set; };
-        public int PromedioPersonasPorReserva { get; set; };
+        public int TotalReservas { get; set; }
+        public decimal IngresoTotal { get; set; }
+        public double TasaCompletado { get; set; }
+        public int PromedioPersonasPorReserva { get; set; }
     }
 
     public class ReservasPorFechaDto

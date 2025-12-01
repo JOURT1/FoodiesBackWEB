@@ -189,9 +189,8 @@ namespace AdminCoreApi.Services
             List<ReservaResponseDto> reservas, 
             List<EntregableResponseDto> todosEntregables)
         {
-            // Agrupar por mes
+            // Usar TODAS las reservas para tener más datos de tendencia
             var visitasPorMes = reservas
-                .Where(r => r.EstadoReserva == "Visita Completada")
                 .GroupBy(r => new { r.Fecha.Year, r.Fecha.Month })
                 .Select(g =>
                 {
@@ -224,7 +223,7 @@ namespace AdminCoreApi.Services
 
         private PrediccionDto CalcularPrediccionRegresionLineal(List<VisitaMensualDto> visitasMensuales)
         {
-            if (visitasMensuales.Count < 2)
+            if (visitasMensuales.Count < 1)
             {
                 var proximoMes = DateTime.Now.AddMonths(1);
                 return new PrediccionDto

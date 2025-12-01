@@ -50,5 +50,12 @@ namespace AdminCoreApi.Controllers
             var comparativa = await analyticsService.GetComparativaRestaurantesAsync();
             return Ok(comparativa);
         }
+
+        [HttpGet("reservas-por-fecha")]
+        public async Task<IActionResult> GetReservasPorFecha()
+        {
+            var datos = await analyticsService.GetReservasPorFechaAsync();
+            return Ok(datos);
+        }
     }
 }

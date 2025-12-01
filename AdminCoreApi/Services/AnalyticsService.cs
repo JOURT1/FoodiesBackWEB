@@ -350,5 +350,160 @@ namespace AdminCoreApi.Services
                 InterpretacionTendencia = interpretacion
             };
         }
+
+        public async Task<List<ReservasPorFechaDto>> GetReservasPorFechaAsync()
+        {
+            var reservas = await _reservasService.GetAllReservasAsync();
+            
+            if (!reservas.Any())
+                return new List<ReservasPorFechaDto>();
+
+            var resultado = new List<ReservasPorFechaDto>();
+
+            var reservasPorRestaurante = reservas
+                .GroupBy(r => r.NombreLocal)
+                .Where(g => g.Count() >= 2); // Necesitamos al menos 2 puntos para regresión
+
+            foreach (var grupo in reservasPorRestaurante)
+            {
+                var nombreRestaurante = grupo.Key;
+                var reservasOrdenadas = grupo.OrderBy(r => r.Fecha).ToList();
+                
+                if (!reservasOrdenadas.Any())
+                    continue;
+
+                var primeraFecha = reservasOrdenadas.First().Fecha;
+                var puntos = new List<PuntoReservaDto>();
+
+                foreach (var reserva in reservasOrdenadas)
+                {
+                    var diasDesdeInicio = (reserva.Fecha - primeraFecha).Days;
+                    puntos.Add(new PuntoReservaDto
+                    {
+                        Fecha = reserva.Fecha,
+                        NumeroPersonas = reserva.NumeroPersonas,
+                        DiaRelativo = diasDesdeInicio
+                    });
+                }
+
+                // Calcular función de ajuste (regresión lineal)
+                var funcion = CalcularRegresionPersonasPorFecha(puntos);
+
+                resultado.Add(new ReservasPorFechaDto
+                {
+                    NombreRestaurante = nombreRestaurante,
+                    Puntos = puntos,
+                    FuncionAjuste = funcion
+                });
+            }
+
+            return resultado;
+        }
+
+        private FuncionAjusteDto CalcularRegresionPersonasPorFecha(List<PuntoReservaDto> puntos)
+        {
+            if (puntos.Count < 2)
+            {
+                var promedio = puntos.Any() ? puntos.Average(p => p.NumeroPersonas) : 0;
+                return new FuncionAjusteDto
+                {
+                    Pendiente = 0,
+                    Intercepto = promedio,
+                    CoeficienteCorrelacion = 0,
+                    PromedioPersonas = promedio,
+                    PrediccionProximaSemana = promedio,
+                    Interpretacion = "Datos insuficientes para calcular tendencia"
+                };
+            }
+
+            int n = puntos.Count;
+            double sumX = 0, sumY = 0, sumXY = 0, sumX2 = 0, sumY2 = 0;
+
+            foreach (var punto in puntos)
+            {
+                double x = punto.DiaRelativo;
+                double y = punto.NumeroPersonas;
+                
+                sumX += x;
+                sumY += y;
+                sumXY += x * y;
+                sumX2 += x * x;
+                sumY2 += y * y;
+            }
+
+            // Calcular pendiente (m) e intercepto (b) para y = mx + b
+            double denominador = (n * sumX2 - sumX * sumX);
+            double m = 0;
+            double b = sumY / n;
+
+            if (Math.Abs(denominador) > 0.0001)
+            {
+                m = (n * sumXY - sumX * sumY) / denominador;
+                b = (sumY - m * sumX) / n;
+            }
+
+            // Validar que no haya valores infinitos o NaN
+            if (double.IsInfinity(m) || double.IsNaN(m))
+                m = 0;
+            if (double.IsInfinity(b) || double.IsNaN(b))
+                b = sumY / n;
+
+            // Calcular coeficiente de correlación R²
+            double r2 = 0;
+            if (sumY2 > 0)
+            {
+                double ssTotal = sumY2 - (sumY * sumY) / n;
+                double ssResidual = 0;
+                
+                foreach (var punto in puntos)
+                {
+                    double prediccion = m * punto.DiaRelativo + b;
+                    double residuo = punto.NumeroPersonas - prediccion;
+                    ssResidual += residuo * residuo;
+                }
+
+                if (ssTotal > 0)
+                    r2 = 1 - (ssResidual / ssTotal);
+                
+                if (double.IsNaN(r2) || double.IsInfinity(r2))
+                    r2 = 0;
+            }
+
+            // Calcular promedio de personas
+            double promedioPersonas = sumY / n;
+
+            // Predecir para 7 días después del último punto
+            int ultimoDia = puntos.Max(p => p.DiaRelativo);
+            double prediccionProximaSemana = m * (ultimoDia + 7) + b;
+            
+            if (double.IsNaN(prediccionProximaSemana) || double.IsInfinity(prediccionProximaSemana))
+                prediccionProximaSemana = promedioPersonas;
+
+            // Asegurar que la predicción sea razonable (mínimo 1 persona)
+            prediccionProximaSemana = Math.Max(1, prediccionProximaSemana);
+
+            // Generar interpretación
+            string interpretacion;
+            if (Math.Abs(m) < 0.01)
+                interpretacion = $"Tamaño de grupo estable (~{Math.Round(promedioPersonas, 1)} personas)";
+            else if (m > 0.1)
+                interpretacion = $"Tendencia creciente: grupos más grandes con el tiempo (+{Math.Round(m, 2)} personas/día)";
+            else if (m < -0.1)
+                interpretacion = $"Tendencia decreciente: grupos más pequeños con el tiempo ({Math.Round(m, 2)} personas/día)";
+            else if (m > 0)
+                interpretacion = $"Ligero crecimiento en tamaño de grupos (+{Math.Round(m, 3)} personas/día)";
+            else
+                interpretacion = $"Ligera disminución en tamaño de grupos ({Math.Round(m, 3)} personas/día)";
+
+            return new FuncionAjusteDto
+            {
+                Pendiente = Math.Round(m, 4),
+                Intercepto = Math.Round(b, 2),
+                CoeficienteCorrelacion = Math.Round(r2, 4),
+                PromedioPersonas = Math.Round(promedioPersonas, 1),
+                PrediccionProximaSemana = Math.Round(prediccionProximaSemana, 1),
+                Interpretacion = interpretacion
+            };
+        }
     }
 }

@@ -75,9 +75,33 @@ namespace AdminCoreApi.Dtos.Response
     public class RestauranteComparativoDto
     {
         public string Nombre { get; set; } = string.Empty;
-        public int TotalReservas { get; set; }
-        public decimal IngresoTotal { get; set; }
-        public double TasaCompletado { get; set; }
-        public int PromedioPersonasPorReserva { get; set; }
+        public int TotalReservas { get; set; };
+        public decimal IngresoTotal { get; set; };
+        public double TasaCompletado { get; set; };
+        public int PromedioPersonasPorReserva { get; set; };
+    }
+
+    public class ReservasPorFechaDto
+    {
+        public required string NombreRestaurante { get; set; }
+        public List<PuntoReservaDto> Puntos { get; set; } = new();
+        public FuncionAjusteDto FuncionAjuste { get; set; } = new();
+    }
+
+    public class PuntoReservaDto
+    {
+        public DateTime Fecha { get; set; }
+        public int NumeroPersonas { get; set; }
+        public int DiaRelativo { get; set; } // Días desde la primera reserva
+    }
+
+    public class FuncionAjusteDto
+    {
+        public double Pendiente { get; set; } // m en y = mx + b
+        public double Intercepto { get; set; } // b en y = mx + b
+        public double CoeficienteCorrelacion { get; set; } // R²
+        public string Interpretacion { get; set; } = string.Empty;
+        public double PromedioPersonas { get; set; }
+        public double PrediccionProximaSemana { get; set; }
     }
 }

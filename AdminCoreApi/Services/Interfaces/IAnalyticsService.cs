@@ -10,5 +10,6 @@ namespace AdminCoreApi.Services.Interfaces
         Task<List<TendenciaVisitasDto>> GetTendenciasVisitasAsync();
         Task<TendenciaVisitasDto?> GetTendenciaVisitasByRestauranteAsync(string nombreRestaurante);
         Task<ComparativaRestaurantesDto> GetComparativaRestaurantesAsync();
+        Task<List<ReservasPorFechaDto>> GetReservasPorFechaAsync();
     }
 }

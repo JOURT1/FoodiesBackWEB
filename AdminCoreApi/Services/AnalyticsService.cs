@@ -254,21 +254,58 @@ namespace AdminCoreApi.Services
             }
 
             // Calcular pendiente (m) y ordenada al origen (b)
-            double m = (n * sumXY - sumX * sumY) / (n * sumX2 - sumX * sumX);
-            double b = (sumY - m * sumX) / n;
+            double denominador = (n * sumX2 - sumX * sumX);
+            double m = 0;
+            double b = 0;
+            
+            // Verificar que el denominador no sea cero para evitar división por cero
+            if (Math.Abs(denominador) > 0.0001)
+            {
+                m = (n * sumXY - sumX * sumY) / denominador;
+                b = (sumY - m * sumX) / n;
+            }
+            else
+            {
+                // Si el denominador es 0, todos los puntos tienen el mismo X (imposible) 
+                // o todos los Y son iguales (línea horizontal)
+                m = 0;
+                b = sumY / n; // Promedio de Y
+            }
+            
+            // Validar que m y b no sean Infinity o NaN
+            if (double.IsInfinity(m) || double.IsNaN(m))
+            {
+                m = 0;
+            }
+            if (double.IsInfinity(b) || double.IsNaN(b))
+            {
+                b = sumY / n;
+            }
 
             // Predicción para el siguiente mes
             double xSiguiente = n + 1;
             double visitasPredichas = m * xSiguiente + b;
 
-            // Asegurar que la predicción no sea negativa
+            // Asegurar que la predicción no sea negativa, infinita o NaN
+            if (double.IsInfinity(visitasPredichas) || double.IsNaN(visitasPredichas) || visitasPredichas < 0)
+            {
+                visitasPredichas = sumY / n; // Usar promedio como fallback
+            }
             visitasPredichas = Math.Max(0, visitasPredichas);
 
             // Calcular porcentaje de crecimiento
             var ultimoMes = visitasMensuales.Last();
-            double porcentajeCrecimiento = ultimoMes.CantidadVisitas > 0
-                ? ((visitasPredichas - ultimoMes.CantidadVisitas) / ultimoMes.CantidadVisitas) * 100
-                : 0;
+            double porcentajeCrecimiento = 0;
+            if (ultimoMes.CantidadVisitas > 0)
+            {
+                porcentajeCrecimiento = ((visitasPredichas - ultimoMes.CantidadVisitas) / ultimoMes.CantidadVisitas) * 100;
+            }
+            
+            // Validar porcentaje de crecimiento
+            if (double.IsInfinity(porcentajeCrecimiento) || double.IsNaN(porcentajeCrecimiento))
+            {
+                porcentajeCrecimiento = 0;
+            }
 
             // Interpretación de la tendencia
             string interpretacion;

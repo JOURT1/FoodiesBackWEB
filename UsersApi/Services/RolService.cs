@@ -42,6 +42,11 @@ namespace UsersApi.Services
             return MapToResponseDto(rol);
         }
 
+        public async Task<bool> DeleteAsync(int id)
+        {
+            return await _rolRepository.DeleteAsync(id);
+        }
+
         private static RolResponseDto MapToResponseDto(Rol rol)
         {
             return new RolResponseDto

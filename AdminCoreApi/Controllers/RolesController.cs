@@ -37,5 +37,12 @@ namespace AdminCoreApi.Controllers
             var resultado = await rolesService.RemoverRolDeUsuarioAsync(request);
             return Ok(resultado);
         }
+
+        [HttpDelete("{id:int}")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var resultado = await rolesService.DeleteRolAsync(id);
+            return Ok(resultado);
+        }
     }
 }

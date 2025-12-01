@@ -9,5 +9,6 @@ namespace AdminCoreApi.Services.Interfaces
         Task<RolResponseDto?> CreateRolAsync(CreateRolRequestDto request);
         Task<bool> AsignarRolToUsuarioAsync(AsignarRolRequestDto request);
         Task<bool> RemoverRolDeUsuarioAsync(RemoverRolRequestDto request);
+        Task<bool> DeleteRolAsync(int id);
     }
 }

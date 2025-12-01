@@ -7,5 +7,6 @@ namespace UsersApi.Services.Interfaces
         Task<List<RolResponseDto>> GetAllAsync();
         Task<RolResponseDto?> GetByIdAsync(int id);
         Task<RolResponseDto> CreateAsync(string nombre, string? descripcion);
+        Task<bool> DeleteAsync(int id);
     }
 }

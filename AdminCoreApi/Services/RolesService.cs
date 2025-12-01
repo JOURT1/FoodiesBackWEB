@@ -71,6 +71,13 @@ namespace AdminCoreApi.Services
             return response.IsSuccessStatusCode;
         }
 
+        public async Task<bool> DeleteRolAsync(int id)
+        {
+            var client = CreateAuthorizedClient("UsersApi");
+            var response = await client.DeleteAsync($"api/Roles/{id}");
+            return response.IsSuccessStatusCode;
+        }
+
         private HttpClient CreateAuthorizedClient(string clientName)
         {
             var client = _httpClientFactory.CreateClient(clientName);

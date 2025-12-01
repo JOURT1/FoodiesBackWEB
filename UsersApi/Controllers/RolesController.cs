@@ -31,5 +31,13 @@ namespace UsersApi.Controllers
             var rol = await rolService.CreateAsync(requestDto.Nombre, requestDto.Descripcion);
             return CreatedAtAction(nameof(GetById), new { id = rol.Id }, rol);
         }
+
+        [HttpDelete("{id:int}")]
+        [Authorize(Policy = "AdminOnly")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var resultado = await rolService.DeleteAsync(id);
+            return Ok(new { success = resultado, message = resultado ? "Rol eliminado correctamente" : "No se pudo eliminar el rol" });
+        }
     }
 }

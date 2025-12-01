@@ -234,7 +234,28 @@ namespace AdminCoreApi.Services
                     VisitasPredichas = 0,
                     Tendencia = 0,
                     PorcentajeCrecimiento = 0,
-                    InterpretacionTendencia = "No hay suficientes datos para predicción"
+                    InterpretacionTendencia = "No hay datos disponibles"
+                };
+            }
+
+            var ultimoMes = visitasMensuales.Last();
+            var proximoMesReal = new DateTime(ultimoMes.Año, ultimoMes.Mes, 1).AddMonths(1);
+            
+            // Si solo hay 1 mes de datos, asumir crecimiento moderado del 5%
+            if (visitasMensuales.Count == 1)
+            {
+                double visitasActuales = visitasMensuales[0].CantidadVisitas;
+                double prediccionUnMes = visitasActuales * 1.05; // 5% de crecimiento estimado
+                
+                return new PrediccionDto
+                {
+                    MesSiguiente = proximoMesReal.Month,
+                    AñoSiguiente = proximoMesReal.Year,
+                    NombreMesSiguiente = proximoMesReal.ToString("MMMM yyyy"),
+                    VisitasPredichas = Math.Round(prediccionUnMes, 0),
+                    Tendencia = 0.05,
+                    PorcentajeCrecimiento = 5.0,
+                    InterpretacionTendencia = "Estimación basada en un solo mes (crecimiento moderado proyectado)"
                 };
             }
 
@@ -266,8 +287,7 @@ namespace AdminCoreApi.Services
             }
             else
             {
-                // Si el denominador es 0, todos los puntos tienen el mismo X (imposible) 
-                // o todos los Y son iguales (línea horizontal)
+                // Si el denominador es 0, todos los Y son iguales (línea horizontal)
                 m = 0;
                 b = sumY / n; // Promedio de Y
             }
@@ -294,7 +314,6 @@ namespace AdminCoreApi.Services
             visitasPredichas = Math.Max(0, visitasPredichas);
 
             // Calcular porcentaje de crecimiento
-            var ultimoMes = visitasMensuales.Last();
             double porcentajeCrecimiento = 0;
             if (ultimoMes.CantidadVisitas > 0)
             {
@@ -309,16 +328,16 @@ namespace AdminCoreApi.Services
 
             // Interpretación de la tendencia
             string interpretacion;
-            if (m > 0.5)
+            if (Math.Abs(m) < 0.01)
+                interpretacion = "Tendencia estable (sin cambios significativos)";
+            else if (m > 0.5)
                 interpretacion = "Tendencia de crecimiento fuerte";
             else if (m > 0)
                 interpretacion = "Tendencia de crecimiento moderado";
             else if (m > -0.5)
-                interpretacion = "Tendencia estable o leve decrecimiento";
+                interpretacion = "Tendencia de leve decrecimiento";
             else
-                interpretacion = "Tendencia de decrecimiento";
-
-            var proximoMesReal = new DateTime(ultimoMes.Año, ultimoMes.Mes, 1).AddMonths(1);
+                interpretacion = "Tendencia de decrecimiento fuerte";
 
             return new PrediccionDto
             {

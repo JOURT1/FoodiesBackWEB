@@ -88,8 +88,6 @@ services:
         value: http://0.0.0.0:$PORT
       - key: ASPNETCORE_ENVIRONMENT
         value: Production
-      - key: ConnectionStrings__ConnectionDataBase
-        value: Host=dpg-d5rdfuh4tr6s73e0pn7g-a.oregon-postgres.render.com;Port=5432;Database=admincoredb;Username=foodies_db_7bwi_user;Password=D0xlbFCfU2mIJrYcg4rIQXznA0G3RUkR;SslMode=Require
       - key: Jwt__SecretKey
         value: mi-clave-secreta-super-segura-de-32-caracteres-minimo-para-jwt-tokens-2024
       - key: Jwt__Issuer

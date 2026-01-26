@@ -12,7 +12,7 @@ services:
       - key: ASPNETCORE_ENVIRONMENT
         value: Production
       - key: ConnectionStrings__ConnectionDataBase
-        value: Host=dpg-d46vkuhr0fns73bh4a90-a.oregon-postgres.render.com;Port=5432;Database=usersdb;Username=usersdb_i1k2_user;Password=q4lJ5MVqcsys9BJCcaC4WCQE1PE9hEox;SslMode=Require
+        value: Host=dpg-d5rdfuh4tr6s73e0pn7g-a.oregon-postgres.render.com;Port=5432;Database=usersdb;Username=foodies_db_7bwi_user;Password=D0xlbFCfU2mIJrYcg4rIQXznA0G3RUkR;SslMode=Require
       - key: Jwt__SecretKey
         value: mi-clave-secreta-super-segura-de-32-caracteres-minimo-para-jwt-tokens-2024
       - key: Jwt__Issuer
@@ -35,7 +35,7 @@ services:
       - key: ASPNETCORE_ENVIRONMENT
         value: Production
       - key: ConnectionStrings__ConnectionDataBase
-        value: Host=dpg-d46vkuhr0fns73bh4a90-a.oregon-postgres.render.com;Port=5432;Database=formulariofoodiedb;Username=usersdb_i1k2_user;Password=q4lJ5MVqcsys9BJCcaC4WCQE1PE9hEox;SslMode=Require
+        value: Host=dpg-d5rdfuh4tr6s73e0pn7g-a.oregon-postgres.render.com;Port=5432;Database=formulariofoodiedb;Username=foodies_db_7bwi_user;Password=D0xlbFCfU2mIJrYcg4rIQXznA0G3RUkR;SslMode=Require
       - key: Jwt__SecretKey
         value: mi-clave-secreta-super-segura-de-32-caracteres-minimo-para-jwt-tokens-2024
       - key: Jwt__Issuer
@@ -62,7 +62,7 @@ services:
       - key: ASPNETCORE_ENVIRONMENT
         value: Production
       - key: ConnectionStrings__ConnectionDataBase
-        value: Host=dpg-d46vkuhr0fns73bh4a90-a.oregon-postgres.render.com;Port=5432;Database=reservasdb;Username=usersdb_i1k2_user;Password=q4lJ5MVqcsys9BJCcaC4WCQE1PE9hEox;SslMode=Require
+        value: Host=dpg-d5rdfuh4tr6s73e0pn7g-a.oregon-postgres.render.com;Port=5432;Database=reservasdb;Username=foodies_db_7bwi_user;Password=D0xlbFCfU2mIJrYcg4rIQXznA0G3RUkR;SslMode=Require
       - key: Jwt__SecretKey
         value: mi-clave-secreta-super-segura-de-32-caracteres-minimo-para-jwt-tokens-2024
       - key: Jwt__Issuer
@@ -88,6 +88,8 @@ services:
         value: http://0.0.0.0:$PORT
       - key: ASPNETCORE_ENVIRONMENT
         value: Production
+      - key: ConnectionStrings__ConnectionDataBase
+        value: Host=dpg-d5rdfuh4tr6s73e0pn7g-a.oregon-postgres.render.com;Port=5432;Database=admincoredb;Username=foodies_db_7bwi_user;Password=D0xlbFCfU2mIJrYcg4rIQXznA0G3RUkR;SslMode=Require
       - key: Jwt__SecretKey
         value: mi-clave-secreta-super-segura-de-32-caracteres-minimo-para-jwt-tokens-2024
       - key: Jwt__Issuer
